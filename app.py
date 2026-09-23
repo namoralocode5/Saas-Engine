@@ -207,6 +207,26 @@ st.markdown("""
         text-decoration: none;
         margin-top: 8px;
     }
+
+    .card-buy-btn {
+        display: block;
+        width: 100%;
+        text-align: center;
+        background: linear-gradient(135deg, #ff9100 0%, #ff6d00 100%);
+        color: #000000 !important;
+        font-weight: 800;
+        padding: 6px 10px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 12px;
+        margin-top: 6px;
+    }
+
+    .pro-features {
+        font-size: 12px;
+        color: #a0aec0 !important;
+        margin-bottom: 10px;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -242,9 +262,14 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-with st.expander("🔑 PRO License Activation / Gumroad Key"):
-    user_key = st.text_input("Enter your Gumroad License Key:", type="password")
-    GUMROAD_PERMALINK = "namoralo"
+# Temporary license check for UI expansion status
+user_key_input = st.session_state.get("user_key_input", "")
+GUMROAD_PERMALINK = "namoralo"
+is_pro_init = verify_gumroad_license(GUMROAD_PERMALINK, user_key_input)
+
+# License activation section (Auto-expands if not PRO)
+with st.expander("🔑 PRO License Activation / Gumroad Key", expanded=not is_pro_init):
+    user_key = st.text_input("Enter your Gumroad License Key:", type="password", key="user_key_input")
     is_pro = verify_gumroad_license(GUMROAD_PERMALINK, user_key)
     
     if is_pro:
@@ -252,7 +277,14 @@ with st.expander("🔑 PRO License Activation / Gumroad Key"):
     elif user_key:
         st.error("❌ Invalid or expired license key.")
     else:
-        st.info("Don't have access yet?")
+        st.markdown("""
+        <div class="pro-features">
+            🔓 <b>Unlock PRO Features:</b><br>
+            • Unmask Exact Long & Short Exchanges<br>
+            • 1-Click Direct Trade Execution Links<br>
+            • Real-Time Arbitrage Spreads & Multi-Exchange Data
+        </div>
+        """, unsafe_allow_html=True)
         st.markdown('<a href="https://namoralo.gumroad.com" target="_blank" class="buy-btn">💳 Get PRO License on Gumroad</a>', unsafe_allow_html=True)
         st.caption("Test License Key: `TEST-PRO-1234`")
 
@@ -338,13 +370,20 @@ if st.button("🔎 SCAN MARKET NOW"):
             m2.metric("Max Net APY", f"+{results[0]['net_apy']}%")
             st.write("")
 
+            # Coin Search Bar
+            search_query = st.text_input("🔍 Search Asset (e.g. BTC, BLUR, SOL):", "").strip().upper()
+            if search_query:
+                results = [item for item in results if search_query in item['asset']]
+
             for item in results:
                 if is_pro:
                     long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none;">{item["long_ex"]} ↗</a>'
                     short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #ff5252; text-decoration: none;">{item["short_ex"]} ↗</a>'
+                    pro_button_html = ""
                 else:
                     long_display = "🔒 PRO"
                     short_display = "🔒 PRO"
+                    pro_button_html = '<a href="https://namoralo.gumroad.com" target="_blank" class="card-buy-btn">💳 Unlock Exchanges on Gumroad</a>'
                 
                 short_tag = "🔥 STABLE" if "STABLE" in item['trend_tag'] else "⚠️ SPIKE"
                 tag_class = "badge-stable" if "STABLE" in item['trend_tag'] else "badge-spike"
@@ -363,6 +402,7 @@ if st.button("🔎 SCAN MARKET NOW"):
                     <div class="strategy-box">
                         🟢 LONG: {long_display}<br>
                         🔴 SHORT: {short_display}
+                        {pro_button_html}
                     </div>
                     <div class="roi-box">
                         💵 Est. Profit (${st.session_state.capital} @ {st.session_state.leverage}x): <b>+${item['profit_usd']} / yr</b>
