@@ -301,7 +301,7 @@ with st.expander("🔑 PRO License Activation / Gumroad Key", expanded=not is_pr
         st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">💳 Get PRO License on Gumroad</a>', unsafe_allow_html=True)
         st.caption("Test License Key: `TEST-PRO-1234`")
 
-# 4. Parameters and Sliders (W tym zaawansowany kalkulator prowizji i filtrów)
+# 4. Parameters and Sliders
 with st.expander("⚙️ Portfolio, Fees & Exchange Settings", expanded=False):
     st.session_state.capital = st.number_input("Capital ($)", min_value=100, value=st.session_state.capital, step=500)
     st.session_state.leverage = st.slider("Leverage", min_value=1, max_value=5, value=st.session_state.leverage)
@@ -353,14 +353,13 @@ if st.button("🔎 SCAN MARKET NOW"):
 
             payments_per_day = 3
             gross_annual_apy = spread_pct * payments_per_day * 365 * st.session_state.leverage
-            
-            # Uwzględnienie kosztów prowizji w rocznym obrocie/amortyzacji
             fee_drag = st.session_state.fee_pct * st.session_state.leverage
             net_annual_apy = max(0.0, gross_annual_apy - fee_drag)
 
             risk_label, risk_class = calculate_risk_level(asset, spread_pct)
 
-            if net_annual_apy >= 5.0:
+            # Pobieramy wszystkie dodatnie wyniki, a filtrowanie robimy niżej dynamicznie!
+            if net_annual_apy >= 0.0:
                 est_profit_year = round((st.session_state.capital * net_annual_apy) / 100, 2)
                 results.append({
                     'asset': asset,
@@ -377,53 +376,57 @@ if st.button("🔎 SCAN MARKET NOW"):
                 })
 
         results = sorted(results, key=lambda x: x['net_apy'], reverse=True)
+        # Zapisujemy pełną listę w session_state żeby filtry działały bez ponownego skanowania
+        st.session_state.scan_results = results
 
-        if results:
-            now_str = datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
-            st.caption(f"⏱️ Last Update: **{now_str}**")
+# Wyświetlanie wyników z pamięci (dzięki temu zmiana filtrów nie resetuje aplikacji)
+if "scan_results" in st.session_state and st.session_state.scan_results:
+    results = st.session_state.scan_results
+    
+    now_str = datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
+    st.caption(f"⏱️ Last Update: **{now_str}**")
+    
+    m1, m2 = st.columns(2)
+    m1.metric("Pairs Found", f"{len(results)}")
+    if results:
+        m2.metric("Max Net APY", f"+{results[0]['net_apy']}%")
+    st.write("")
+
+    # Filter & Search Controls
+    col_search, col_apy, col_filter = st.columns([2, 1, 1])
+    with col_search:
+        search_query = st.text_input("🔍 Search Asset:", "").strip().upper()
+    with col_apy:
+        min_apy_filter = st.number_input("📉 Min. Net APY (%)", min_value=0.0, value=0.0, step=5.0)
+    with col_filter:
+        only_my_exchanges = st.checkbox("🎯 My Exchanges Only", value=False)
+
+    # Filtrowanie dynamiczne
+    filtered_results = results.copy()
+    if search_query:
+        filtered_results = [item for item in filtered_results if search_query in item['asset']]
+
+    if min_apy_filter > 0:
+        filtered_results = [item for item in filtered_results if item['net_apy'] >= min_apy_filter]
+
+    if only_my_exchanges:
+        active_set = {ex.upper() for ex in st.session_state.selected_exchanges}
+        filtered_results = [item for item in filtered_results if item['long_ex'] in active_set and item['short_ex'] in active_set]
+
+    if filtered_results:
+        for idx, item in enumerate(filtered_results):
+            if is_pro:
+                long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["long_ex"]} ↗</a>'
+                short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #ff5252; text-decoration: none; font-weight: bold;">{item["short_ex"]} ↗</a>'
+                pro_button_html = ""
+                strategy_line = f'<div style="margin-top: 4px; font-size: 11px; color: #00e676; font-family: monospace;">📋 Plan: LONG {item["long_ex"]} | SHORT {item["short_ex"]} | {item["asset"]}/USDT</div>'
+            else:
+                long_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
+                short_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
+                pro_button_html = '<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="card-buy-btn">💳 Unlock Exchanges on Gumroad</a>'
+                strategy_line = ""
             
-            m1, m2 = st.columns(2)
-            m1.metric("Pairs Found", f"{len(results)}")
-            m2.metric("Max Net APY", f"+{results[0]['net_apy']}%")
-            st.write("")
-
-            # Filter & Search Controls
-            col_search, col_apy, col_filter = st.columns([2, 1, 1])
-            with col_search:
-                search_query = st.text_input("🔍 Search Asset:", "").strip().upper()
-            with col_apy:
-                min_apy_filter = st.number_input("📉 Min. Net APY (%)", min_value=0.0, value=0.0, step=5.0)
-            with col_filter:
-                only_my_exchanges = st.checkbox("🎯 My Exchanges Only", value=False)
-
-            if search_query:
-                results = [item for item in results if search_query in item['asset']]
-
-            if min_apy_filter > 0:
-                results = [item for item in results if item['net_apy'] >= min_apy_filter]
-
-            if only_my_exchanges:
-                active_set = {ex.upper() for ex in st.session_state.selected_exchanges}
-                results = [item for item in results if item['long_ex'] in active_set and item['short_ex'] in active_set]
-
-            for idx, item in enumerate(results):
-                if is_pro:
-                    long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["long_ex"]} ↗</a>'
-                    short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #ff5252; text-decoration: none; font-weight: bold;">{item["short_ex"]} ↗</a>'
-                    pro_button_html = ""
-                    strategy_line = f'<div style="margin-top: 4px; font-size: 11px; color: #00e676; font-family: monospace;">📋 Plan: LONG {item["long_ex"]} | SHORT {item["short_ex"]} | {item["asset"]}/USDT</div>'
-                    
-                    # Interaktywny przycisk szybkiego kopiowania strategii Streamlit
-                    copy_text = f"LONG: {item['long_ex']} ({item['asset']}/USDT) | SHORT: {item['short_ex']} ({item['asset']}/USDT) | Net APY: +{item['net_apy']}%"
-                    copy_btn_key = f"copy_btn_{idx}_{item['asset']}"
-                    
-                else:
-                    long_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
-                    short_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
-                    pro_button_html = '<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="card-buy-btn">💳 Unlock Exchanges on Gumroad</a>'
-                    strategy_line = ""
-                
-                card_html = f"""<div class="crypto-card">
+            card_html = f"""<div class="crypto-card">
 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
     <div>
         <div style="font-size: 18px; font-weight: 800; color: #ffffff;">{item['asset']}/USDT</div>
@@ -447,15 +450,16 @@ if st.button("🔎 SCAN MARKET NOW"):
     <a href="{item['tv_url']}" target="_blank" style="color: #00b0ff; text-decoration: none; font-weight: bold;">TradingView 📈</a>
 </div>
 </div>"""
-                st.markdown(card_html, unsafe_allow_html=True)
-                
-                # Przycisk kopiowania dla użytkowników PRO bezpośrednio pod kartą
-                if is_pro:
-                    if st.button(f"📋 Copy Trade Plan: {item['asset']}", key=f"btn_copy_{idx}_{item['asset']}"):
-                        st.toast(f"Copied to clipboard: LONG {item['long_ex']} / SHORT {item['short_ex']}", icon="✅")
+            st.markdown(card_html, unsafe_allow_html=True)
+            
+            if is_pro:
+                if st.button(f"📋 Copy Trade Plan: {item['asset']}", key=f"btn_copy_{idx}_{item['asset']}"):
+                    st.toast(f"Copied to clipboard: LONG {item['long_ex']} / SHORT {item['short_ex']}", icon="✅")
 
-            if not is_pro:
-                st.warning("🔒 Activate PRO license to unlock exchanges, direct links and copy tools.")
-                st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">💳 Get PRO License & Unlock Exchanges</a>', unsafe_allow_html=True)
-        else:
-            st.info("No arbitrage opportunities matching current criteria.")
+        if not is_pro:
+            st.warning("🔒 Activate PRO license to unlock exchanges, direct links and copy tools.")
+            st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">💳 Get PRO License & Unlock Exchanges</a>', unsafe_allow_html=True)
+    else:
+        st.info("No arbitrage opportunities matching current filter criteria.")
+else:
+    st.info("Click 'SCAN MARKET NOW' to fetch current arbitrage spreads.")
