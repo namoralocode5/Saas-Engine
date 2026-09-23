@@ -115,18 +115,21 @@ st.markdown("""
         border-color: #2962ff !important;
     }
 
-    /* Wymuszony ciemny styl dla bloku strategii */
+    /* Dopracowany, responsywny styl dla bloku strategii wewnątrz karty */
     .custom-code-box {
-        background-color: #151a24 !important;
+        background-color: #0f131a !important;
         border: 1px solid #2962ff !important;
-        border-radius: 8px !important;
-        padding: 10px 14px !important;
+        border-radius: 6px !important;
+        padding: 8px 10px !important;
         font-family: monospace !important;
-        font-size: 12px !important;
+        font-size: 11px !important;
         color: #00e676 !important;
-        margin-top: 4px !important;
-        margin-bottom: 12px !important;
-        word-break: break-all !important;
+        margin-top: 10px !important;
+        margin-bottom: 8px !important;
+        word-break: normal !important;
+        word-wrap: break-word !important;
+        white-space: pre-wrap !important;
+        line-height: 1.4 !important;
     }
     
     div[data-testid="stExpander"] {
@@ -158,7 +161,7 @@ st.markdown("""
         border: 1px solid #232a3b !important;
         border-radius: 12px !important;
         padding: 14px !important;
-        margin-bottom: 12px !important;
+        margin-bottom: 14px !important;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
     }
     
@@ -423,12 +426,15 @@ if st.button("🔎 SCAN MARKET NOW"):
                     long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["long_ex"]} ↗</a>'
                     short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #ff5252; text-decoration: none; font-weight: bold;">{item["short_ex"]} ↗</a>'
                     pro_button_html = ""
-                    strategy_text = f"{item['asset']}/USDT: LONG on {item['long_ex']} | SHORT on {item['short_ex']} (Net APY: +{item['net_apy']}%)"
+                    copy_block_html = f"""
+                    <div style="font-size: 10px; color: #a0aec0; margin-top: 8px;">📋 Strategy Plan:</div>
+                    <div class="custom-code-box">{item['asset']}/USDT | LONG: {item['long_ex']} | SHORT: {item['short_ex']} | APY: +{item['net_apy']}%</div>
+                    """
                 else:
                     long_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
                     short_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
                     pro_button_html = '<a href="https://namoralo.gumroad.com" target="_blank" class="card-buy-btn">💳 Unlock Exchanges on Gumroad</a>'
-                    strategy_text = ""
+                    copy_block_html = ""
                 
                 card_html = f"""<div class="crypto-card">
 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
@@ -448,18 +454,13 @@ if st.button("🔎 SCAN MARKET NOW"):
 <div class="roi-box">
     💵 Est. Profit (${st.session_state.capital} @ {st.session_state.leverage}x): <b style="color: #82b1ff;">+${item['profit_usd']} / yr</b>
 </div>
-<div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #8f9cae;">
+{copy_block_html}
+<div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #8f9cae; margin-top: 6px;">
     <span>Spread/8h: +{item['spread']}%</span>
     <a href="{item['tv_url']}" target="_blank" style="color: #00b0ff; text-decoration: none; font-weight: bold;">TradingView 📈</a>
 </div>
 </div>"""
                 st.markdown(card_html, unsafe_allow_html=True)
-                
-                if is_pro and strategy_text:
-                    st.markdown(f"""
-                    <div style="font-size: 11px; color: #a0aec0; margin-top: 2px;">📋 Copy Strategy Plan:</div>
-                    <div class="custom-code-box">{strategy_text}</div>
-                    """, unsafe_allow_html=True)
 
             if not is_pro:
                 st.warning("🔒 Activate PRO license to unlock exchanges and direct links.")
