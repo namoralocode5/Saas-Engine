@@ -77,7 +77,7 @@ if "min_vol" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling - FinTech Dark Mode & Expander Background Fix
+# 2. CSS Styling
 st.markdown("""
     <style>
     .stApp {
@@ -170,15 +170,6 @@ st.markdown("""
         color: #82b1ff !important;
     }
 
-    .roi-box * {
-        color: #82b1ff !important;
-        background-color: transparent !important;
-    }
-
-    .strategy-box * {
-        background-color: transparent !important;
-    }
-
     .stButton>button {
         width: 100% !important;
         border-radius: 10px !important;
@@ -263,12 +254,12 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# Temporary license check for UI expansion status
+# License state check
 user_key_input = st.session_state.get("user_key_input", "")
 GUMROAD_PERMALINK = "namoralo"
 is_pro_init = verify_gumroad_license(GUMROAD_PERMALINK, user_key_input)
 
-# License activation section (Auto-expands if not PRO)
+# License activation section
 with st.expander("🔑 PRO License Activation / Gumroad Key", expanded=not is_pro_init):
     user_key = st.text_input("Enter your Gumroad License Key:", type="password", key="user_key_input")
     is_pro = verify_gumroad_license(GUMROAD_PERMALINK, user_key)
@@ -289,7 +280,7 @@ with st.expander("🔑 PRO License Activation / Gumroad Key", expanded=not is_pr
         st.markdown('<a href="https://namoralo.gumroad.com" target="_blank" class="buy-btn">💳 Get PRO License on Gumroad</a>', unsafe_allow_html=True)
         st.caption("Test License Key: `TEST-PRO-1234`")
 
-# 4. Parameters and Sliders in Expander (Session State)
+# 4. Parameters and Sliders
 with st.expander("⚙️ Portfolio & Exchange Settings", expanded=False):
     st.session_state.capital = st.number_input("Capital ($)", min_value=100, value=st.session_state.capital, step=500)
     st.session_state.leverage = st.slider("Leverage", min_value=1, max_value=5, value=st.session_state.leverage)
@@ -371,49 +362,46 @@ if st.button("🔎 SCAN MARKET NOW"):
             m2.metric("Max Net APY", f"+{results[0]['net_apy']}%")
             st.write("")
 
-            # Coin Search Bar
             search_query = st.text_input("🔍 Search Asset (e.g. BTC, BLUR, SOL):", "").strip().upper()
             if search_query:
                 results = [item for item in results if search_query in item['asset']]
 
             for item in results:
                 if is_pro:
-                    long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none;">{item["long_ex"]} ↗</a>'
-                    short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #ff5252; text-decoration: none;">{item["short_ex"]} ↗</a>'
+                    long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["long_ex"]} ↗</a>'
+                    short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #ff5252; text-decoration: none; font-weight: bold;">{item["short_ex"]} ↗</a>'
                     pro_button_html = ""
                 else:
-                    long_display = "🔒 PRO"
-                    short_display = "🔒 PRO"
+                    long_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
+                    short_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
                     pro_button_html = '<a href="https://namoralo.gumroad.com" target="_blank" class="card-buy-btn">💳 Unlock Exchanges on Gumroad</a>'
                 
                 short_tag = "🔥 STABLE" if "STABLE" in item['trend_tag'] else "⚠️ SPIKE"
                 tag_class = "badge-stable" if "STABLE" in item['trend_tag'] else "badge-spike"
                 
-                card_html = f"""
-                <div class="crypto-card">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-                        <div>
-                            <div style="font-size: 18px; font-weight: 800; color: #ffffff;">{item['asset']}/USDT</div>
-                            <span class="{tag_class}" style="margin-top: 4px; display: inline-block;">{short_tag}</span>
-                        </div>
-                        <div class="badge-apy" style="text-align: right;">
-                            +{item['net_apy']}% APY <span style="font-size: 10px; opacity: 0.8;">({st.session_state.leverage}x)</span>
-                        </div>
-                    </div>
-                    <div class="strategy-box">
-                        🟢 LONG: {long_display}<br>
-                        🔴 SHORT: {short_display}
-                        {pro_button_html}
-                    </div>
-                    <div class="roi-box">
-                        💵 Est. Profit (${st.session_state.capital} @ {st.session_state.leverage}x): <b>+${item['profit_usd']} / yr</b>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: #8f9cae;">
-                        <span>Spread/8h: +{item['spread']}%</span>
-                        <a href="{item['tv_url']}" target="_blank" style="color: #00b0ff; text-decoration: none; font-weight: bold;">TradingView 📈</a>
-                    </div>
-                </div>
-                """
+                card_html = f"""<div class="crypto-card">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+    <div>
+        <div style="font-size: 18px; font-weight: 800; color: #ffffff;">{item['asset']}/USDT</div>
+        <span class="{tag_class}" style="margin-top: 4px; display: inline-block;">{short_tag}</span>
+    </div>
+    <div class="badge-apy" style="text-align: right;">
+        +{item['net_apy']}% APY <span style="font-size: 10px; opacity: 0.8;">({st.session_state.leverage}x)</span>
+    </div>
+</div>
+<div class="strategy-box">
+    🟢 LONG: {long_display}<br>
+    🔴 SHORT: {short_display}
+    {pro_button_html}
+</div>
+<div class="roi-box">
+    💵 Est. Profit (${st.session_state.capital} @ {st.session_state.leverage}x): <b style="color: #82b1ff;">+${item['profit_usd']} / yr</b>
+</div>
+<div style="display: flex; justify-content: space-between; font-size: 11px; color: #8f9cae;">
+    <span>Spread/8h: +{item['spread']}%</span>
+    <a href="{item['tv_url']}" target="_blank" style="color: #00b0ff; text-decoration: none; font-weight: bold;">TradingView 📈</a>
+</div>
+</div>"""
                 st.markdown(card_html, unsafe_allow_html=True)
                 
             if not is_pro:
