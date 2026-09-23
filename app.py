@@ -358,7 +358,6 @@ if st.button("🔎 SCAN MARKET NOW"):
 
             risk_label, risk_class = calculate_risk_level(asset, spread_pct)
 
-            # Pobieramy wszystkie dodatnie wyniki, a filtrowanie robimy niżej dynamicznie!
             if net_annual_apy >= 0.0:
                 est_profit_year = round((st.session_state.capital * net_annual_apy) / 100, 2)
                 results.append({
@@ -376,10 +375,9 @@ if st.button("🔎 SCAN MARKET NOW"):
                 })
 
         results = sorted(results, key=lambda x: x['net_apy'], reverse=True)
-        # Zapisujemy pełną listę w session_state żeby filtry działały bez ponownego skanowania
         st.session_state.scan_results = results
 
-# Wyświetlanie wyników z pamięci (dzięki temu zmiana filtrów nie resetuje aplikacji)
+# Wyświetlanie wyników z pamięci
 if "scan_results" in st.session_state and st.session_state.scan_results:
     results = st.session_state.scan_results
     
@@ -401,7 +399,6 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
     with col_filter:
         only_my_exchanges = st.checkbox("🎯 My Exchanges Only", value=False)
 
-    # Filtrowanie dynamiczne
     filtered_results = results.copy()
     if search_query:
         filtered_results = [item for item in filtered_results if search_query in item['asset']]
@@ -414,12 +411,12 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
         filtered_results = [item for item in filtered_results if item['long_ex'] in active_set and item['short_ex'] in active_set]
 
     if filtered_results:
-        for idx, item in enumerate(filtered_results):
+        for item in filtered_results:
             if is_pro:
                 long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["long_ex"]} ↗</a>'
                 short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #ff5252; text-decoration: none; font-weight: bold;">{item["short_ex"]} ↗</a>'
                 pro_button_html = ""
-                strategy_line = f'<div style="margin-top: 4px; font-size: 11px; color: #00e676; font-family: monospace;">📋 Plan: LONG {item["long_ex"]} | SHORT {item["short_ex"]} | {item["asset"]}/USDT</div>'
+                strategy_line = f'<div style="margin-top: 4px; font-size: 11px; color: #00e676; font-family: monospace;">📋 Copy Plan: LONG {item["long_ex"]} | SHORT {item["short_ex"]} | {item["asset"]}/USDT</div>'
             else:
                 long_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
                 short_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
@@ -451,13 +448,9 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
 </div>
 </div>"""
             st.markdown(card_html, unsafe_allow_html=True)
-            
-            if is_pro:
-                if st.button(f"📋 Copy Trade Plan: {item['asset']}", key=f"btn_copy_{idx}_{item['asset']}"):
-                    st.toast(f"Copied to clipboard: LONG {item['long_ex']} / SHORT {item['short_ex']}", icon="✅")
 
         if not is_pro:
-            st.warning("🔒 Activate PRO license to unlock exchanges, direct links and copy tools.")
+            st.warning("🔒 Activate PRO license to unlock exchanges and direct links.")
             st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">💳 Get PRO License & Unlock Exchanges</a>', unsafe_allow_html=True)
     else:
         st.info("No arbitrage opportunities matching current filter criteria.")
