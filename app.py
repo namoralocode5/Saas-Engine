@@ -71,11 +71,11 @@ def get_exchange_trade_url(exchange_name, asset):
 def calculate_risk_level(asset, spread_pct):
     top_tier_assets = {'BTC', 'ETH', 'SOL', 'XRP', 'ADA', 'DOGE', 'BNB', 'AVAX', 'LINK', 'SUI'}
     if asset in top_tier_assets:
-        return ("🟢 LOW RISK", "badge-stable")
+        return ("🛡️ STABLE ASSET", "badge-stable")
     elif spread_pct <= 0.20:
-        return ("🟡 MEDIUM RISK", "badge-stable")
+        return ("⚖️ BALANCED SPREAD", "badge-stable")
     else:
-        return ("⚠️ HIGH VOLATILITY", "badge-spike")
+        return ("⚡ HIGH MOMENTUM", "badge-spike")
 
 # Initialize session state
 if "capital" not in st.session_state:
@@ -89,7 +89,7 @@ if "fee_pct" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling - Complete FinTech Dark Mode & Mobile Bar Fix
+# 2. CSS Styling - FinTech Dark Mode with Gold Accents
 st.markdown("""
     <style>
     .stApp {
@@ -117,7 +117,7 @@ st.markdown("""
     div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input {
         background-color: #151a24 !important;
         color: #ffffff !important;
-        border: 1px solid #2a354d !important;
+        border: 1px solid #d4af37 !important;
         border-radius: 8px !important;
     }
 
@@ -128,23 +128,24 @@ st.markdown("""
     }
     div[data-testid="stExpander"] summary {
         background-color: #151a24 !important;
-        color: #f1f3f6 !important;
+        color: #f5c518 !important;
+        font-weight: 700 !important;
     }
     
     .timer-banner {
         background: linear-gradient(90deg, #1e2638 0%, #111622 100%);
-        border: 1px solid #2962ff;
+        border: 1px solid #d4af37;
         border-radius: 10px;
         padding: 8px 12px;
         text-align: center;
         font-size: 13px;
-        color: #82b1ff !important;
+        color: #f5c518 !important;
         margin-bottom: 12px;
     }
     
     .crypto-card {
         background-color: #151a24 !important;
-        border: 1px solid #232a3b !important;
+        border: 1px solid #2a354d !important;
         border-radius: 12px !important;
         padding: 14px !important;
         margin-bottom: 14px !important;
@@ -152,13 +153,13 @@ st.markdown("""
     }
     
     .badge-apy {
-        background: rgba(0, 230, 118, 0.15) !important;
-        color: #00e676 !important;
+        background: rgba(212, 175, 55, 0.15) !important;
+        color: #f5c518 !important;
         padding: 4px 8px !important;
         border-radius: 8px !important;
         font-weight: 700 !important;
         font-size: 13px !important;
-        border: 1px solid rgba(0, 230, 118, 0.3) !important;
+        border: 1px solid rgba(212, 175, 55, 0.4) !important;
     }
 
     .badge-stable {
@@ -192,12 +193,12 @@ st.markdown("""
     
     .roi-box {
         background-color: #121929 !important;
-        border: 1px dashed #2962ff !important;
+        border: 1px dashed #d4af37 !important;
         padding: 8px 12px !important;
         border-radius: 6px !important;
         margin-bottom: 10px !important;
         font-size: 12px !important;
-        color: #82b1ff !important;
+        color: #f5c518 !important;
     }
 
     .stButton>button {
@@ -206,22 +207,22 @@ st.markdown("""
         height: 50px !important;
         font-size: 16px !important;
         font-weight: 700 !important;
-        background: linear-gradient(135deg, #2962ff 0%, #00b0ff 100%) !important;
-        color: #ffffff !important;
+        background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%) !important;
+        color: #000000 !important;
         border: none !important;
-        box-shadow: 0 4px 15px rgba(41, 98, 255, 0.4) !important;
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3) !important;
     }
     
     div[data-testid="stMetricValue"] {
         font-size: 20px !important;
-        color: #00b0ff !important;
+        color: #f5c518 !important;
     }
     
     .buy-btn {
         display: inline-block;
         width: 100%;
         text-align: center;
-        background: #ff9100 !important;
+        background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%) !important;
         color: #000000 !important;
         font-weight: 800;
         padding: 12px;
@@ -234,7 +235,7 @@ st.markdown("""
         display: block;
         width: 100%;
         text-align: center;
-        background: linear-gradient(135deg, #ff9100 0%, #ff6d00 100%) !important;
+        background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%) !important;
         color: #000000 !important;
         font-weight: 800;
         padding: 6px 10px;
@@ -252,7 +253,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Main Brand Header
+# 3. Main Brand Header (Twoje nienaruszone logo z elegancką, złotą oprawą)
 st.markdown("""
 <div style="
     display: flex; 
@@ -275,12 +276,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown("### Arbitrage Pulse PRO")
-st.caption("Real-Time Funding Rate Arbitrage Scanner")
+st.caption("Institutional Cross-Exchange Funding Rate Terminal")
 
 time_left = get_next_funding_time()
 st.markdown(f"""
 <div class="timer-banner">
-    ⏳ Next Funding Rate Settlement in: <b>{time_left}</b>
+    ⏳ Next Funding Settlement in: <b>{time_left}</b>
 </div>
 """, unsafe_allow_html=True)
 
@@ -295,19 +296,19 @@ with st.expander("🔑 PRO License Activation / Gumroad Key", expanded=not is_pr
     is_pro = verify_gumroad_license(GUMROAD_PERMALINK, user_key)
     
     if is_pro:
-        st.success("✅ PRO License Active! Full access unlocked.")
+        st.success("✅ PRO License Active! Institutional terminal unlocked.")
     elif user_key:
         st.error("❌ Invalid or expired license key.")
     else:
         st.markdown("""
         <div class="pro-features">
-            🔓 <b>Unlock PRO Features:</b><br>
-            • Unmask Exact Long & Short Exchanges<br>
+            🔓 <b>Unlock PRO Terminal:</b><br>
+            • Unmask Exact Long & Short Exchange Pairs<br>
             • 1-Click Direct Trade Execution Links<br>
-            • Real-Time Arbitrage Spreads & Multi-Exchange Data
+            • Advanced Spread Analytics & Live Feeds
         </div>
         """, unsafe_allow_html=True)
-        st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">💳 Get PRO License on Gumroad</a>', unsafe_allow_html=True)
+        st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">💳 Get PRO Access on Gumroad</a>', unsafe_allow_html=True)
         st.caption("Test License Key: `TEST-PRO-1234`")
 
 # 4. Parameters and Sliders
@@ -329,7 +330,7 @@ st.write("")
 
 # 5. Action Button & Market Scan
 if st.button("🔎 SCAN MARKET NOW"):
-    with st.spinner("Fetching funding rates from exchanges..."):
+    with st.spinner("Analyzing cross-exchange funding spreads..."):
         all_ex_data = {}
         for ex in st.session_state.selected_exchanges:
             data = cached_fetch_exchange_data(ex, min_volume_usd=st.session_state.min_vol)
@@ -422,10 +423,10 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
     if filtered_results:
         for item in filtered_results:
             if is_pro:
-                long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["long_ex"]} ↗</a>'
+                long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #f5c518; text-decoration: none; font-weight: bold;">{item["long_ex"]} ↗</a>'
                 short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #ff5252; text-decoration: none; font-weight: bold;">{item["short_ex"]} ↗</a>'
                 pro_button_html = ""
-                strategy_line = f'<div style="margin-top: 4px; font-size: 11px; color: #00e676; font-family: monospace;">📋 Copy Plan: LONG {item["long_ex"]} | SHORT {item["short_ex"]} | {item["asset"]}/USDT</div>'
+                strategy_line = f'<div style="margin-top: 4px; font-size: 11px; color: #f5c518; font-family: monospace;">📋 Copy Plan: LONG {item["long_ex"]} | SHORT {item["short_ex"]} | {item["asset"]}/USDT</div>'
             else:
                 long_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
                 short_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
@@ -448,12 +449,12 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
     {pro_button_html}
 </div>
 <div class="roi-box">
-    💵 Est. Profit (${st.session_state.capital} @ {st.session_state.leverage}x): <b style="color: #82b1ff;">+${item['profit_usd']} / yr</b>
+    💵 Est. Profit (${st.session_state.capital} @ {st.session_state.leverage}x): <b style="color: #ffffff;">+${item['profit_usd']} / yr</b>
     {strategy_line}
 </div>
 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #8f9cae;">
     <span>Spread/8h: +{item['spread']}% (Fees: {st.session_state.fee_pct}%)</span>
-    <a href="{item['tv_url']}" target="_blank" style="color: #00b0ff; text-decoration: none; font-weight: bold;">TradingView 📈</a>
+    <a href="{item['tv_url']}" target="_blank" style="color: #f5c518; text-decoration: none; font-weight: bold;">TradingView 📈</a>
 </div>
 </div>"""
             st.markdown(card_html, unsafe_allow_html=True)
