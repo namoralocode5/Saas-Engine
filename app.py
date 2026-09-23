@@ -87,7 +87,7 @@ if "min_vol" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling - Complete FinTech Dark Mode & High Contrast Overrides
+# 2. CSS Styling - Complete FinTech Dark Mode Overrides
 st.markdown("""
     <style>
     .stApp {
@@ -98,32 +98,35 @@ st.markdown("""
     header {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* Naprawa słabo widocznych etykiet, metryk i tekstów */
+    /* Etykiety i teksty - wysoki kontrast */
     div[data-testid="stMetricLabel"] p, label, .stTextInput label, span, p {
-        color: #e2e8f0 !important;
+        color: #f1f3f6 !important;
         font-weight: 600 !important;
     }
     
-    /* Naprawa białego tła w polach tekstowych (Search Asset / Gumroad Key) */
+    /* Pasek wyszukiwania / klucza - ciemne tło z obramowaniem */
     div[data-testid="stTextInput"] input {
         background-color: #151a24 !important;
         color: #ffffff !important;
-        border: 1px solid #232a3b !important;
+        border: 1px solid #2a354d !important;
         border-radius: 8px !important;
     }
     div[data-testid="stTextInput"] input:focus {
         border-color: #2962ff !important;
     }
 
-    /* Naprawa rażącego białego tła w bloku ze strategią do kopiowania */
-    div[data-testid="stCodeBlock"] {
+    /* Wymuszony ciemny styl dla bloku strategii */
+    .custom-code-box {
         background-color: #151a24 !important;
         border: 1px solid #2962ff !important;
         border-radius: 8px !important;
-    }
-    div[data-testid="stCodeBlock"] code {
+        padding: 10px 14px !important;
+        font-family: monospace !important;
+        font-size: 12px !important;
         color: #00e676 !important;
-        background-color: transparent !important;
+        margin-top: 4px !important;
+        margin-bottom: 12px !important;
+        word-break: break-all !important;
     }
     
     div[data-testid="stExpander"] {
@@ -420,7 +423,6 @@ if st.button("🔎 SCAN MARKET NOW"):
                     long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["long_ex"]} ↗</a>'
                     short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #ff5252; text-decoration: none; font-weight: bold;">{item["short_ex"]} ↗</a>'
                     pro_button_html = ""
-                    
                     strategy_text = f"{item['asset']}/USDT: LONG on {item['long_ex']} | SHORT on {item['short_ex']} (Net APY: +{item['net_apy']}%)"
                 else:
                     long_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
@@ -454,8 +456,10 @@ if st.button("🔎 SCAN MARKET NOW"):
                 st.markdown(card_html, unsafe_allow_html=True)
                 
                 if is_pro and strategy_text:
-                    st.caption("📋 Copy Strategy Plan:")
-                    st.code(strategy_text, language="text")
+                    st.markdown(f"""
+                    <div style="font-size: 11px; color: #a0aec0; margin-top: 2px;">📋 Copy Strategy Plan:</div>
+                    <div class="custom-code-box">{strategy_text}</div>
+                    """, unsafe_allow_html=True)
 
             if not is_pro:
                 st.warning("🔒 Activate PRO license to unlock exchanges and direct links.")
