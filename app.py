@@ -87,7 +87,7 @@ if "min_vol" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling
+# 2. CSS Styling - Complete FinTech Dark Mode & High Contrast Overrides
 st.markdown("""
     <style>
     .stApp {
@@ -97,6 +97,34 @@ st.markdown("""
     
     header {visibility: hidden;}
     footer {visibility: hidden;}
+    
+    /* Naprawa słabo widocznych etykiet, metryk i tekstów */
+    div[data-testid="stMetricLabel"] p, label, .stTextInput label, span, p {
+        color: #e2e8f0 !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Naprawa białego tła w polach tekstowych (Search Asset / Gumroad Key) */
+    div[data-testid="stTextInput"] input {
+        background-color: #151a24 !important;
+        color: #ffffff !important;
+        border: 1px solid #232a3b !important;
+        border-radius: 8px !important;
+    }
+    div[data-testid="stTextInput"] input:focus {
+        border-color: #2962ff !important;
+    }
+
+    /* Naprawa rażącego białego tła w bloku ze strategią do kopiowania */
+    div[data-testid="stCodeBlock"] {
+        background-color: #151a24 !important;
+        border: 1px solid #2962ff !important;
+        border-radius: 8px !important;
+    }
+    div[data-testid="stCodeBlock"] code {
+        color: #00e676 !important;
+        background-color: transparent !important;
+    }
     
     div[data-testid="stExpander"] {
         background-color: #151a24 !important;
@@ -394,12 +422,11 @@ if st.button("🔎 SCAN MARKET NOW"):
                     pro_button_html = ""
                     
                     strategy_text = f"{item['asset']}/USDT: LONG on {item['long_ex']} | SHORT on {item['short_ex']} (Net APY: +{item['net_apy']}%)"
-                    copy_code_block = f'<code>{strategy_text}</code>'
                 else:
                     long_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
                     short_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
                     pro_button_html = '<a href="https://namoralo.gumroad.com" target="_blank" class="card-buy-btn">💳 Unlock Exchanges on Gumroad</a>'
-                    copy_code_block = ""
+                    strategy_text = ""
                 
                 card_html = f"""<div class="crypto-card">
 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
@@ -426,7 +453,7 @@ if st.button("🔎 SCAN MARKET NOW"):
 </div>"""
                 st.markdown(card_html, unsafe_allow_html=True)
                 
-                if is_pro and copy_code_block:
+                if is_pro and strategy_text:
                     st.caption("📋 Copy Strategy Plan:")
                     st.code(strategy_text, language="text")
 
