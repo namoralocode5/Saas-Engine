@@ -89,7 +89,7 @@ if "fee_pct" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling - Complete FinTech Dark Mode
+# 2. CSS Styling - Complete FinTech Dark Mode & Mobile Bar Fix
 st.markdown("""
     <style>
     .stApp {
@@ -97,8 +97,18 @@ st.markdown("""
         color: #f1f3f6 !important;
     }
     
-    header {visibility: hidden;}
+    header, [data-testid="stHeader"] {
+        background-color: #0b0e14 !important;
+        visibility: hidden;
+    }
+    
     footer {visibility: hidden;}
+    
+    /* Wymuszenie ciemnego tła dla całej struktury mobilnej */
+    .block-container {
+        padding-top: 1rem !important;
+        background-color: #0b0e14 !important;
+    }
     
     div[data-testid="stMetricLabel"] p, label, .stTextInput label, span, p {
         color: #f1f3f6 !important;
@@ -413,8 +423,8 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
     if filtered_results:
         for item in filtered_results:
             if is_pro:
-                long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["long_ex"]} ↗</a>'
-                short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #ff5252; text-decoration: none; font-weight: bold;">{item["short_ex"]} ↗</a>'
+                long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["long_ex']} ↗</a>'
+                short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #ff5252; text-decoration: none; font-weight: bold;">{item["short_ex']} ↗</a>'
                 pro_button_html = ""
                 strategy_line = f'<div style="margin-top: 4px; font-size: 11px; color: #00e676; font-family: monospace;">📋 Copy Plan: LONG {item["long_ex"]} | SHORT {item["short_ex"]} | {item["asset"]}/USDT</div>'
             else:
