@@ -87,7 +87,7 @@ if "min_vol" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling - Clean FinTech Dark Mode
+# 2. CSS Styling - Complete FinTech Dark Mode Overrides
 st.markdown("""
     <style>
     .stApp {
@@ -98,11 +98,13 @@ st.markdown("""
     header {visibility: hidden;}
     footer {visibility: hidden;}
     
+    /* Etykiety i teksty */
     div[data-testid="stMetricLabel"] p, label, .stTextInput label, span, p {
         color: #f1f3f6 !important;
         font-weight: 600 !important;
     }
     
+    /* Pasek wyszukiwania / klucza */
     div[data-testid="stTextInput"] input {
         background-color: #151a24 !important;
         color: #ffffff !important;
@@ -190,9 +192,23 @@ st.markdown("""
         border: 1px dashed #2962ff !important;
         padding: 8px 12px !important;
         border-radius: 6px !important;
-        margin-bottom: 10px !important;
+        margin-bottom: 8px !important;
         font-size: 12px !important;
         color: #82b1ff !important;
+    }
+
+    /* Mały, elegancki i ciemny pasek planu strategii */
+    .mini-copy-box {
+        background-color: #0b0e14 !important;
+        border: 1px solid #1e2d4a !important;
+        border-radius: 6px !important;
+        padding: 6px 8px !important;
+        font-family: monospace !important;
+        font-size: 11px !important;
+        color: #00e676 !important;
+        margin-bottom: 8px !important;
+        user-select: all !important;
+        -webkit-user-select: all !important;
     }
 
     .stButton>button {
@@ -407,10 +423,14 @@ if st.button("🔎 SCAN MARKET NOW"):
                     long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["long_ex"]} ↗</a>'
                     short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #ff5252; text-decoration: none; font-weight: bold;">{item["short_ex"]} ↗</a>'
                     pro_button_html = ""
+                    copy_block_html = f"""
+                    <div class="mini-copy-box">📋 {item['asset']}: LONG {item['long_ex']} | SHORT {item['short_ex']}</div>
+                    """
                 else:
                     long_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
                     short_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
                     pro_button_html = '<a href="https://namoralo.gumroad.com" target="_blank" class="card-buy-btn">💳 Unlock Exchanges on Gumroad</a>'
+                    copy_block_html = ""
                 
                 card_html = f"""<div class="crypto-card">
 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
@@ -430,7 +450,8 @@ if st.button("🔎 SCAN MARKET NOW"):
 <div class="roi-box">
     💵 Est. Profit (${st.session_state.capital} @ {st.session_state.leverage}x): <b style="color: #82b1ff;">+${item['profit_usd']} / yr</b>
 </div>
-<div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #8f9cae; margin-top: 6px;">
+{copy_block_html}
+<div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #8f9cae;">
     <span>Spread/8h: +{item['spread']}%</span>
     <a href="{item['tv_url']}" target="_blank" style="color: #00b0ff; text-decoration: none; font-weight: bold;">TradingView 📈</a>
 </div>
