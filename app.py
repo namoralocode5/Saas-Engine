@@ -101,10 +101,6 @@ st.markdown("""
         background-color: #151a24 !important;
     }
     
-    p, span, label, div, markdown {
-        color: #f1f3f6 !important;
-    }
-    
     .timer-banner {
         background: linear-gradient(90deg, #1e2638 0%, #111622 100%);
         border: 1px solid #2962ff;
@@ -117,66 +113,71 @@ st.markdown("""
     }
     
     .crypto-card {
-        background: #151a24;
-        border: 1px solid #232a3b;
-        border-radius: 12px;
-        padding: 14px;
-        margin-bottom: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        background-color: #151a24 !important;
+        border: 1px solid #232a3b !important;
+        border-radius: 12px !important;
+        padding: 14px !important;
+        margin-bottom: 12px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
     }
     
     .badge-apy {
-        background: rgba(0, 230, 118, 0.15);
+        background: rgba(0, 230, 118, 0.15) !important;
         color: #00e676 !important;
-        padding: 4px 8px;
-        border-radius: 8px;
-        font-weight: 700;
-        font-size: 13px;
-        border: 1px solid rgba(0, 230, 118, 0.3);
+        padding: 4px 8px !important;
+        border-radius: 8px !important;
+        font-weight: 700 !important;
+        font-size: 13px !important;
+        border: 1px solid rgba(0, 230, 118, 0.3) !important;
     }
 
     .badge-stable {
-        background: rgba(41, 98, 255, 0.15);
+        background: rgba(41, 98, 255, 0.15) !important;
         color: #82b1ff !important;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-size: 10px;
-        font-weight: 700;
-        border: 1px solid rgba(41, 98, 255, 0.3);
+        padding: 2px 6px !important;
+        border-radius: 4px !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        border: 1px solid rgba(41, 98, 255, 0.3) !important;
     }
 
     .badge-spike {
-        background: rgba(255, 179, 0, 0.15);
+        background: rgba(255, 179, 0, 0.15) !important;
         color: #ffb300 !important;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-size: 10px;
-        font-weight: 700;
-        border: 1px solid rgba(255, 179, 0, 0.3);
+        padding: 2px 6px !important;
+        border-radius: 4px !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        border: 1px solid rgba(255, 179, 0, 0.3) !important;
     }
     
     .strategy-box {
-        background: #1c2333;
-        padding: 10px;
-        border-radius: 8px;
-        margin-bottom: 10px;
-        font-size: 13px;
+        background-color: #1c2333 !important;
+        padding: 10px !important;
+        border-radius: 8px !important;
+        margin-bottom: 10px !important;
+        font-size: 13px !important;
         color: #f1f3f6 !important;
     }
     
     .roi-box {
-        background: rgba(41, 98, 255, 0.1);
-        border: 1px dashed #2962ff;
-        padding: 8px 12px;
-        border-radius: 6px;
-        margin-bottom: 10px;
-        font-size: 12px;
+        background-color: #121929 !important;
+        border: 1px dashed #2962ff !important;
+        padding: 8px 12px !important;
+        border-radius: 6px !important;
+        margin-bottom: 10px !important;
+        font-size: 12px !important;
         color: #82b1ff !important;
     }
-    
-    .long-txt { color: #00e676 !important; font-weight: bold; }
-    .short-txt { color: #ff5252 !important; font-weight: bold; }
-    .pro-lock { color: #ffb300 !important; font-weight: bold; }
+
+    .roi-box * {
+        color: #82b1ff !important;
+        background-color: transparent !important;
+    }
+
+    .strategy-box * {
+        background-color: transparent !important;
+    }
 
     .stButton>button {
         width: 100% !important;
@@ -199,7 +200,7 @@ st.markdown("""
         display: inline-block;
         width: 100%;
         text-align: center;
-        background: #ff9100;
+        background: #ff9100 !important;
         color: #000000 !important;
         font-weight: 800;
         padding: 12px;
@@ -212,7 +213,7 @@ st.markdown("""
         display: block;
         width: 100%;
         text-align: center;
-        background: linear-gradient(135deg, #ff9100 0%, #ff6d00 100%);
+        background: linear-gradient(135deg, #ff9100 0%, #ff6d00 100%) !important;
         color: #000000 !important;
         font-weight: 800;
         padding: 6px 10px;
