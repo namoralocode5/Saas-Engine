@@ -89,7 +89,7 @@ if "fee_pct" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling
+# 2. CSS Styling - Bezpośrednie wygaszenie wszystkich jasnych kontenerów Streamlit
 st.markdown("""
     <style>
     .stApp {
@@ -108,7 +108,36 @@ st.markdown("""
         padding-top: 1rem !important;
         background-color: #0b0e14 !important;
     }
-    
+
+    /* Usunięcie białych teł w podklasach st.multiselect (Active Exchanges) */
+    div[data-baseweb="select"], 
+    div[data-baseweb="select"] *,
+    div[class*="ValueContainer"],
+    div[class*="ControlGroup"],
+    div[class*="InputContainer"] {
+        background-color: #151a24 !important;
+        color: #ffffff !important;
+        border-color: #2a354d !important;
+    }
+
+    /* Usunięcie jasnego tła w kontenerach number_input oraz przyciskach + / - */
+    div[data-testid="stNumberInputContainer"],
+    div[data-testid="stNumberInputContainer"] *,
+    button[aria-label="Increase value"],
+    button[aria-label="Decrease value"],
+    button[data-testid="stNumberInputStepDown"],
+    button[data-testid="stNumberInputStepUp"] {
+        background-color: #151a24 !important;
+        color: #ffffff !important;
+        border-color: #2a354d !important;
+    }
+
+    div[data-testid="stNumberInputStepDown"] svg, 
+    div[data-testid="stNumberInputStepUp"] svg {
+        fill: #ffffff !important;
+        color: #ffffff !important;
+    }
+
     div[data-testid="stMetricLabel"] p, label, .stTextInput label, span, p {
         color: #f1f3f6 !important;
         font-weight: 600 !important;
@@ -119,14 +148,6 @@ st.markdown("""
         color: #ffffff !important;
         border: 1px solid #2a354d !important;
         border-radius: 8px !important;
-    }
-
-    /* Usunięcie białego tła w st.multiselect (Active Exchanges) */
-    div[data-baseweb="select"] *, 
-    div[data-baseweb="select"] div,
-    div[data-baseweb="base-input"] {
-        background-color: #151a24 !important;
-        color: #ffffff !important;
     }
 
     div[data-testid="stExpander"] {
