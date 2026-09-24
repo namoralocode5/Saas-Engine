@@ -89,7 +89,7 @@ if "fee_pct" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling - Oryginalny styl + poprawka widoczności przycisku CSV
+# 2. CSS Styling - Pełne usunięcie białych teł i zamiana na ciemnoniebieski motyw FinTech
 st.markdown("""
     <style>
     .stApp {
@@ -121,7 +121,32 @@ st.markdown("""
         border-radius: 8px !important;
     }
 
-    /* Dopasowanie przycisku pobierania CSV do reszty ciemnych pól */
+    /* Likwidacja białego tła w st.number_input (przyciski + / -) */
+    div[data-testid="stNumberInputContainer"] {
+        background-color: #151a24 !important;
+        border: 1px solid #2a354d !important;
+        border-radius: 8px !important;
+    }
+    
+    div[data-testid="stNumberInputContainer"] button {
+        background-color: #1c2333 !important;
+        color: #ffffff !important;
+        border-color: #2a354d !important;
+    }
+    
+    div[data-testid="stNumberInputContainer"] button svg {
+        fill: #ffffff !important;
+        color: #ffffff !important;
+    }
+
+    /* Likwidacja białego tła w st.multiselect (Active Exchanges) */
+    div[data-baseweb="select"] > div {
+        background-color: #151a24 !important;
+        border: 1px solid #2a354d !important;
+        border-radius: 8px !important;
+    }
+
+    /* Przycisk pobierania CSV w ciemnym, spójnym stylu */
     div.stDownloadButton > button {
         background-color: #151a24 !important;
         color: #ffffff !important;
