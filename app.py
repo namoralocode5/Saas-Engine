@@ -89,7 +89,7 @@ if "fee_pct" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling - Original FinTech Dark Mode & Layout Fixes
+# 2. CSS Styling - Dark Mode Fixes & No White Backgrounds
 st.markdown("""
     <style>
     .stApp {
@@ -109,16 +109,46 @@ st.markdown("""
         background-color: #0b0e14 !important;
     }
     
-    div[data-testid="stMetricLabel"] p, label, .stTextInput label, span, p {
-        color: #f1f3f6 !important;
-        font-weight: 600 !important;
+    /* Usunięcie białych teł w inputach, selektorach i przyciskach Streamlita */
+    div[data-baseweb="input"], div[data-baseweb="base-input"], div[data-baseweb="select"] {
+        background-color: #151a24 !important;
+        border-color: #2a354d !important;
     }
     
+    input {
+        color: #ffffff !important;
+        background-color: #151a24 !important;
+    }
+
     div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input {
         background-color: #151a24 !important;
         color: #ffffff !important;
         border: 1px solid #2a354d !important;
         border-radius: 8px !important;
+    }
+
+    /* Przycisk pobierania CSV bez białego tła */
+    div.stDownloadButton > button {
+        background: linear-gradient(135deg, #151a24 0%, #1c2333 100%) !important;
+        color: #00b0ff !important;
+        border: 1px solid #2962ff !important;
+        border-radius: 8px !important;
+        font-weight: 700 !important;
+        height: 42px !important;
+    }
+    div.stDownloadButton > button:hover {
+        background: #2962ff !important;
+        color: #ffffff !important;
+    }
+
+    div[data-testid="stMetricValue"] {
+        font-size: 20px !important;
+        color: #00b0ff !important;
+    }
+    
+    div[data-testid="stMetricLabel"] p, label, .stTextInput label, span, p {
+        color: #f1f3f6 !important;
+        font-weight: 600 !important;
     }
 
     div[data-testid="stExpander"] {
@@ -210,11 +240,6 @@ st.markdown("""
         color: #ffffff !important;
         border: none !important;
         box-shadow: 0 4px 15px rgba(41, 98, 255, 0.4) !important;
-    }
-    
-    div[data-testid="stMetricValue"] {
-        font-size: 20px !important;
-        color: #00b0ff !important;
     }
     
     .buy-btn {
@@ -395,14 +420,14 @@ if st.button("🔎 SCAN MARKET NOW"):
         results = sorted(results, key=lambda x: x['net_apy'], reverse=True)
         st.session_state.scan_results = results
 
-# Wyświetlanie wyników z pamięci (uporządkowane)
+# Wyświetlanie wyników
 if "scan_results" in st.session_state and st.session_state.scan_results:
     results = st.session_state.scan_results
     
     now_str = datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
     st.caption(f"⏱️ Last Update: **{now_str}** | Min. Vol: **${st.session_state.min_vol:,.0f}**")
     
-    # Filter & Search Controls - Umieszczone PRZED metrykami i kartami dla zachowania perfekcyjnej czytelności
+    # Przejrzysta sekcja wyszukiwania i filtrów
     col_search, col_apy, col_filter = st.columns([2, 1, 1])
     with col_search:
         search_query = st.text_input("🔍 Search Asset:", "").strip().upper()
@@ -424,7 +449,7 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
 
     st.write("")
     
-    # Czyste metryki po przefiltrowaniu
+    # Czysty układ metryk w 2 kolumnach
     m1, m2 = st.columns(2)
     m1.metric("Filtered Pairs", f"{len(filtered_results)}")
     if filtered_results:
@@ -434,7 +459,7 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
         
     st.write("")
 
-    # Opcja eksportu do CSV umieszczona w czytelnym miejscu
+    # Przycisk pobierania CSV
     if filtered_results:
         df_export = pd.DataFrame(filtered_results)
         csv_data = df_export.to_csv(index=False).encode('utf-8')
