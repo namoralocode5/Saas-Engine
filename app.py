@@ -8,7 +8,7 @@ from arbitrage_scanner import scan_cross_exchange_arbitrage, fetch_exchange_data
 # 1. Page Configuration
 st.set_page_config(
     page_title="Arbitrage Pulse PRO | Namoralo Code",
-    page_icon="âš¡",
+    page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -71,11 +71,11 @@ def get_exchange_trade_url(exchange_name, asset):
 def calculate_risk_level(asset, spread_pct):
     top_tier_assets = {'BTC', 'ETH', 'SOL', 'XRP', 'ADA', 'DOGE', 'BNB', 'AVAX', 'LINK', 'SUI'}
     if asset in top_tier_assets:
-        return ("ðŸŸ¢ LOW RISK", "badge-stable")
+        return ("🟢 LOW RISK", "badge-stable")
     elif spread_pct <= 0.20:
-        return ("ðŸŸ¡ MEDIUM RISK", "badge-stable")
+        return ("🟡 MEDIUM RISK", "badge-stable")
     else:
-        return ("âš ï¸ HIGH VOLATILITY", "badge-spike")
+        return ("⚠️ HIGH VOLATILITY", "badge-spike")
 
 # Initialize session state
 if "capital" not in st.session_state:
@@ -83,7 +83,7 @@ if "capital" not in st.session_state:
 if "leverage" not in st.session_state:
     st.session_state.leverage = 1
 if "min_vol" not in st.session_state:
-    st.session_state.min_vol = 1000000  # DomyÅ›lnie 1M USD dla pÅ‚ynnoÅ›ci
+    st.session_state.min_vol = 1000000  # Domyślnie 1M USD dla płynności
 if "fee_pct" not in st.session_state:
     st.session_state.fee_pct = 0.04
 if "selected_exchanges" not in st.session_state:
@@ -266,7 +266,7 @@ st.markdown("""
     box-shadow: 0 4px 15px rgba(0, 230, 118, 0.15);
 ">
     <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-size: 18px; color: #00e676;">âš¡ <b>NC</b></span>
+        <span style="font-size: 18px; color: #00e676;">⚡ <b>NC</b></span>
         <span style="color: #4a5568;">|</span>
         <span style="font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #e2e8f0;">NAMORALO CODE</span>
     </div>
@@ -280,7 +280,7 @@ st.caption("Real-Time Funding Rate Arbitrage Scanner")
 time_left = get_next_funding_time()
 st.markdown(f"""
 <div class="timer-banner">
-    â³ Next Funding Rate Settlement in: <b>{time_left}</b>
+    ⏳ Next Funding Rate Settlement in: <b>{time_left}</b>
 </div>
 """, unsafe_allow_html=True)
 
@@ -290,34 +290,34 @@ GUMROAD_PERMALINK = "arbitrage-pulse-pro"
 is_pro_init = verify_gumroad_license(GUMROAD_PERMALINK, user_key_input)
 
 # License activation section
-with st.expander("ðŸ”‘ PRO License Activation / Gumroad Key", expanded=not is_pro_init):
+with st.expander("🔑 PRO License Activation / Gumroad Key", expanded=not is_pro_init):
     user_key = st.text_input("Enter your Gumroad License Key:", type="password", key="user_key_input")
     is_pro = verify_gumroad_license(GUMROAD_PERMALINK, user_key)
     
     if is_pro:
-        st.success("âœ… PRO License Active! Full access unlocked.")
+        st.success("✅ PRO License Active! Full access unlocked.")
     elif user_key:
-        st.error("âŒ Invalid or expired license key.")
+        st.error("❌ Invalid or expired license key.")
     else:
         st.markdown("""
         <div class="pro-features">
-            ðŸ”“ <b>Unlock PRO Features:</b><br>
-            â€¢ Unmask Exact Long & Short Exchanges<br>
-            â€¢ 1-Click Direct Trade Execution Links<br>
-            â€¢ Real-Time Arbitrage Spreads & Multi-Exchange Data
+            🔓 <b>Unlock PRO Features:</b><br>
+            • Unmask Exact Long & Short Exchanges<br>
+            • 1-Click Direct Trade Execution Links<br>
+            • Real-Time Arbitrage Spreads & Multi-Exchange Data
         </div>
         """, unsafe_allow_html=True)
-        st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">ðŸ’³ Get PRO License on Gumroad</a>', unsafe_allow_html=True)
+        st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">💳 Get PRO License on Gumroad</a>', unsafe_allow_html=True)
         st.caption("Test License Key: `TEST-PRO-1234`")
 
 # 4. Parameters, Volume Filter & Sliders
-with st.expander("âš™ï¸ Portfolio, Volume & Exchange Settings", expanded=False):
+with st.expander("⚙️ Portfolio, Volume & Exchange Settings", expanded=False):
     st.session_state.capital = st.number_input("Capital ($)", min_value=100, value=st.session_state.capital, step=500)
     st.session_state.leverage = st.slider("Leverage", min_value=1, max_value=5, value=st.session_state.leverage)
     
     # NOWY SUWAK WOLUMENU (Volume Filter)
     st.session_state.min_vol = st.slider(
-        "ðŸ“Š Min. 24h Volume (USDT)",
+        "📊 Min. 24h Volume (USDT)",
         min_value=0,
         max_value=50_000_000,
         value=st.session_state.min_vol,
@@ -333,16 +333,16 @@ with st.expander("âš™ï¸ Portfolio, Volume & Exchange Settings", expanded
         options=['binance', 'bybit', 'okx', 'kraken'],
         default=st.session_state.selected_exchanges
     )
-    st.caption("ðŸŸ¢ Exchange Status: API ready for scanning")
+    st.caption("🟢 Exchange Status: API ready for scanning")
 
 st.write("")
 
 # 5. Action Button & Market Scan
-if st.button("ðŸ”Ž SCAN MARKET NOW"):
+if st.button("🔎 SCAN MARKET NOW"):
     with st.spinner("Fetching funding rates from exchanges..."):
         all_ex_data = {}
         for ex in st.session_state.selected_exchanges:
-            # Przekazujemy suwak wolumenu do funkcji pobierajÄ…cej dane z API gieÅ‚d
+            # Przekazujemy suwak wolumenu do funkcji pobierającej dane z API giełd
             data = cached_fetch_exchange_data(ex, min_volume_usd=st.session_state.min_vol)
             if data:
                 all_ex_data[ex] = data
@@ -397,12 +397,12 @@ if st.button("ðŸ”Ž SCAN MARKET NOW"):
         results = sorted(results, key=lambda x: x['net_apy'], reverse=True)
         st.session_state.scan_results = results
 
-# WyÅ›wietlanie wynikÃ³w z pamiÄ™ci
+# Wyświetlanie wyników z pamięci
 if "scan_results" in st.session_state and st.session_state.scan_results:
     results = st.session_state.scan_results
     
     now_str = datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
-    st.caption(f"â±ï¸ Last Update: **{now_str}** | Min. Vol: **${st.session_state.min_vol:,.0f}**")
+    st.caption(f"⏱️ Last Update: **{now_str}** | Min. Vol: **${st.session_state.min_vol:,.0f}**")
     
     m1, m2 = st.columns(2)
     m1.metric("Pairs Found", f"{len(results)}")
@@ -413,11 +413,11 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
     # Filter & Search Controls
     col_search, col_apy, col_filter = st.columns([2, 1, 1])
     with col_search:
-        search_query = st.text_input("ðŸ” Search Asset:", "").strip().upper()
+        search_query = st.text_input("🔍 Search Asset:", "").strip().upper()
     with col_apy:
-        min_apy_filter = st.number_input("ðŸ“‰ Min. Net APY (%)", min_value=0.0, value=0.0, step=5.0)
+        min_apy_filter = st.number_input("📉 Min. Net APY (%)", min_value=0.0, value=0.0, step=5.0)
     with col_filter:
-        only_my_exchanges = st.checkbox("ðŸŽ¯ My Exchanges Only", value=False)
+        only_my_exchanges = st.checkbox("🎯 My Exchanges Only", value=False)
 
     filtered_results = results.copy()
     if search_query:
@@ -435,7 +435,7 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
         df_export = pd.DataFrame(filtered_results)
         csv_data = df_export.to_csv(index=False).encode('utf-8')
         st.download_button(
-            label="ðŸ“¥ Download Filtered Results (CSV)",
+            label="📥 Download Filtered Results (CSV)",
             data=csv_data,
             file_name=f"arbitrage_pulse_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
             mime="text/csv"
@@ -444,14 +444,14 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
 
         for item in filtered_results:
             if is_pro:
-                long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["long_ex"]} â†—</a>'
-                short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["short_ex"]} â†—</a>'
+                long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["long_ex"]} ↗</a>'
+                short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["short_ex"]} ↗</a>'
                 pro_button_html = ""
-                strategy_line = f'<div style="margin-top: 4px; font-size: 11px; color: #00e676; font-family: monospace;">ðŸ“‹ Copy Plan: LONG {item["long_ex"]} | SHORT {item["short_ex"]} | {item["asset"]}/USDT</div>'
+                strategy_line = f'<div style="margin-top: 4px; font-size: 11px; color: #00e676; font-family: monospace;">📋 Copy Plan: LONG {item["long_ex"]} | SHORT {item["short_ex"]} | {item["asset"]}/USDT</div>'
             else:
-                long_display = '<span style="color: #ffb300; font-weight: bold;">ðŸ”’ PRO</span>'
-                short_display = '<span style="color: #ffb300; font-weight: bold;">ðŸ”’ PRO</span>'
-                pro_button_html = '<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="card-buy-btn">ðŸ’³ Unlock Exchanges on Gumroad</a>'
+                long_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
+                short_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
+                pro_button_html = '<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="card-buy-btn">💳 Unlock Exchanges on Gumroad</a>'
                 strategy_line = ""
             
             card_html = f"""<div class="crypto-card">
@@ -465,24 +465,24 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
     </div>
 </div>
 <div class="strategy-box">
-    ðŸŸ¢ LONG: {long_display}<br>
-    ðŸ”´ SHORT: {short_display}
+    🟢 LONG: {long_display}<br>
+    🔴 SHORT: {short_display}
     {pro_button_html}
 </div>
 <div class="roi-box">
-    ðŸ’µ Est. Profit (${st.session_state.capital} @ {st.session_state.leverage}x): <b style="color: #00e676;">+${item['profit_usd']} / yr</b>
+    💵 Est. Profit (${st.session_state.capital} @ {st.session_state.leverage}x): <b style="color: #00e676;">+${item['profit_usd']} / yr</b>
     {strategy_line}
 </div>
 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #8f9cae;">
     <span>Spread/8h: +{item['spread']}% (Fees: {st.session_state.fee_pct}%)</span>
-    <a href="{item['tv_url']}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">TradingView ðŸ“ˆ</a>
+    <a href="{item['tv_url']}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">TradingView 📈</a>
 </div>
 </div>"""
             st.markdown(card_html, unsafe_allow_html=True)
 
         if not is_pro:
-            st.warning("ðŸ”’ Activate PRO license to unlock exchanges and direct links.")
-            st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">ðŸ’³ Get PRO License & Unlock Exchanges</a>', unsafe_allow_html=True)
+            st.warning("🔒 Activate PRO license to unlock exchanges and direct links.")
+            st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">💳 Get PRO License & Unlock Exchanges</a>', unsafe_allow_html=True)
     else:
         st.info("No arbitrage opportunities matching current filter criteria.")
 else:
