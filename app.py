@@ -117,3 +117,4 @@ if st.button("🔍 SCAN MARKET NOW") or "scanned" in st.session_state:
     if not is_pro:
         st.warning("🔒 **Activate PRO license to unlock exchanges.**")
         st.link_button("💳 Get PRO License", "https://namoralocode.gumroad.com/l/arbitrage-pulse-pro")
+
