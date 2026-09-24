@@ -13,12 +13,10 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Verify Gumroad License
+# Verify Gumroad License (Production Mode - No Test Keys)
 def verify_gumroad_license(product_permalink, license_key):
     if not license_key:
         return False
-    if license_key.strip() == "TEST-PRO-1234":
-        return True
     
     url = "https://api.gumroad.com/v2/licenses/verify"
     payload = {
@@ -334,7 +332,7 @@ with st.expander("🔑 PRO License Activation / Gumroad Key", expanded=not is_pr
         </div>
         """, unsafe_allow_html=True)
         st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">💳 Get PRO License on Gumroad</a>', unsafe_allow_html=True)
-        st.caption("Test License Key: `TEST-PRO-1234`")
+        st.caption("Enter your valid license key purchased on Gumroad.")
 
 # 4. Parameters and Sliders
 with st.expander("⚙️ Portfolio, Fees & Exchange Settings", expanded=False):
