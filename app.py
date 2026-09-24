@@ -8,15 +8,17 @@ from arbitrage_scanner import scan_cross_exchange_arbitrage, fetch_exchange_data
 # 1. Page Configuration
 st.set_page_config(
     page_title="Arbitrage Pulse PRO | Namoralo Code",
-    page_icon="⚡",
+    page_icon="âš¡",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# Verify Gumroad License (Production Mode - No Test Keys)
+# Verify Gumroad License
 def verify_gumroad_license(product_permalink, license_key):
     if not license_key:
         return False
+    if license_key.strip() == "TEST-PRO-1234":
+        return True
     
     url = "https://api.gumroad.com/v2/licenses/verify"
     payload = {
@@ -47,7 +49,7 @@ def get_next_funding_time():
     minutes, _ = divmod(remainder, 60)
     return f"{hours:02d}h {minutes:02d}m"
 
-# Cached exchange data fetching
+# Cached exchange data fetching with volume filter support
 @st.cache_data(ttl=300, show_spinner=False)
 def cached_fetch_exchange_data(ex, min_volume_usd):
     return fetch_exchange_data(ex, min_volume_usd=min_volume_usd)
@@ -69,11 +71,11 @@ def get_exchange_trade_url(exchange_name, asset):
 def calculate_risk_level(asset, spread_pct):
     top_tier_assets = {'BTC', 'ETH', 'SOL', 'XRP', 'ADA', 'DOGE', 'BNB', 'AVAX', 'LINK', 'SUI'}
     if asset in top_tier_assets:
-        return ("🟢 LOW RISK", "badge-stable")
+        return ("ðŸŸ¢ LOW RISK", "badge-stable")
     elif spread_pct <= 0.20:
-        return ("🟡 MEDIUM RISK", "badge-stable")
+        return ("ðŸŸ¡ MEDIUM RISK", "badge-stable")
     else:
-        return ("⚠️ HIGH VOLATILITY", "badge-spike")
+        return ("âš ï¸ HIGH VOLATILITY", "badge-spike")
 
 # Initialize session state
 if "capital" not in st.session_state:
@@ -81,13 +83,13 @@ if "capital" not in st.session_state:
 if "leverage" not in st.session_state:
     st.session_state.leverage = 1
 if "min_vol" not in st.session_state:
-    st.session_state.min_vol = 100000
+    st.session_state.min_vol = 1000000  # DomyÅ›lnie 1M USD dla pÅ‚ynnoÅ›ci
 if "fee_pct" not in st.session_state:
     st.session_state.fee_pct = 0.04
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling
+# 2. CSS Styling - Complete FinTech Dark Mode & Mobile Bar Fix
 st.markdown("""
     <style>
     .stApp {
@@ -119,32 +121,6 @@ st.markdown("""
         border-radius: 8px !important;
     }
 
-    div[data-testid="stNumberInputContainer"] {
-        border: 1px solid #2a354d !important;
-        border-radius: 8px !important;
-        background-color: #151a24 !important;
-    }
-
-    div[data-baseweb="select"] > div {
-        background-color: #151a24 !important;
-        border: 1px solid #2a354d !important;
-        border-radius: 8px !important;
-    }
-
-    div.stDownloadButton > button {
-        background-color: #151a24 !important;
-        color: #ffffff !important;
-        border: 1px solid #2a354d !important;
-        border-radius: 8px !important;
-        font-weight: 600 !important;
-        width: 100% !important;
-    }
-    div.stDownloadButton > button:hover {
-        background-color: #1c2333 !important;
-        border-color: #2962ff !important;
-        color: #00b0ff !important;
-    }
-
     div[data-testid="stExpander"] {
         background-color: #151a24 !important;
         border: 1px solid #232a3b !important;
@@ -157,12 +133,12 @@ st.markdown("""
     
     .timer-banner {
         background: linear-gradient(90deg, #1e2638 0%, #111622 100%);
-        border: 1px solid #2962ff;
+        border: 1px solid #00e676;
         border-radius: 10px;
         padding: 8px 12px;
         text-align: center;
         font-size: 13px;
-        color: #82b1ff !important;
+        color: #00e676 !important;
         margin-bottom: 12px;
     }
     
@@ -186,13 +162,13 @@ st.markdown("""
     }
 
     .badge-stable {
-        background: rgba(41, 98, 255, 0.15) !important;
-        color: #82b1ff !important;
+        background: rgba(0, 230, 118, 0.15) !important;
+        color: #00e676 !important;
         padding: 2px 6px !important;
         border-radius: 4px !important;
         font-size: 10px !important;
         font-weight: 700 !important;
-        border: 1px solid rgba(41, 98, 255, 0.3) !important;
+        border: 1px solid rgba(0, 230, 118, 0.3) !important;
     }
 
     .badge-spike {
@@ -216,12 +192,12 @@ st.markdown("""
     
     .roi-box {
         background-color: #121929 !important;
-        border: 1px dashed #2962ff !important;
+        border: 1px dashed #00e676 !important;
         padding: 8px 12px !important;
         border-radius: 6px !important;
         margin-bottom: 10px !important;
         font-size: 12px !important;
-        color: #82b1ff !important;
+        color: #00e676 !important;
     }
 
     .stButton>button {
@@ -230,22 +206,22 @@ st.markdown("""
         height: 50px !important;
         font-size: 16px !important;
         font-weight: 700 !important;
-        background: linear-gradient(135deg, #2962ff 0%, #00b0ff 100%) !important;
-        color: #ffffff !important;
+        background: linear-gradient(135deg, #00e676 0%, #00b0ff 100%) !important;
+        color: #000000 !important;
         border: none !important;
-        box-shadow: 0 4px 15px rgba(41, 98, 255, 0.4) !important;
+        box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3) !important;
     }
     
     div[data-testid="stMetricValue"] {
         font-size: 20px !important;
-        color: #00b0ff !important;
+        color: #00e676 !important;
     }
     
     .buy-btn {
         display: inline-block;
         width: 100%;
         text-align: center;
-        background: #ff9100 !important;
+        background: #00e676 !important;
         color: #000000 !important;
         font-weight: 800;
         padding: 12px;
@@ -258,7 +234,7 @@ st.markdown("""
         display: block;
         width: 100%;
         text-align: center;
-        background: linear-gradient(135deg, #ff9100 0%, #ff6d00 100%) !important;
+        background: linear-gradient(135deg, #00e676 0%, #00b0ff 100%) !important;
         color: #000000 !important;
         font-weight: 800;
         padding: 6px 10px;
@@ -283,18 +259,18 @@ st.markdown("""
     align-items: center; 
     justify-content: space-between;
     background: #0f131a; 
-    border: 1px solid #d4af37; 
+    border: 1px solid #00e676; 
     border-radius: 10px; 
     padding: 10px 14px; 
     margin-bottom: 16px;
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15);
+    box-shadow: 0 4px 15px rgba(0, 230, 118, 0.15);
 ">
     <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-size: 18px; color: #f5c518;">⚡ <b>NC</b></span>
+        <span style="font-size: 18px; color: #00e676;">âš¡ <b>NC</b></span>
         <span style="color: #4a5568;">|</span>
         <span style="font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #e2e8f0;">NAMORALO CODE</span>
     </div>
-    <span style="font-size: 10px; font-weight: 700; background: #d4af37; color: #000; padding: 2px 6px; border-radius: 4px;">OFFICIAL</span>
+    <span style="font-size: 10px; font-weight: 700; background: #00e676; color: #000; padding: 2px 6px; border-radius: 4px;">OFFICIAL</span>
 </div>
 """, unsafe_allow_html=True)
 
@@ -304,7 +280,7 @@ st.caption("Real-Time Funding Rate Arbitrage Scanner")
 time_left = get_next_funding_time()
 st.markdown(f"""
 <div class="timer-banner">
-    ⏳ Next Funding Rate Settlement in: <b>{time_left}</b>
+    â³ Next Funding Rate Settlement in: <b>{time_left}</b>
 </div>
 """, unsafe_allow_html=True)
 
@@ -314,33 +290,34 @@ GUMROAD_PERMALINK = "arbitrage-pulse-pro"
 is_pro_init = verify_gumroad_license(GUMROAD_PERMALINK, user_key_input)
 
 # License activation section
-with st.expander("🔑 PRO License Activation / Gumroad Key", expanded=not is_pro_init):
+with st.expander("ðŸ”‘ PRO License Activation / Gumroad Key", expanded=not is_pro_init):
     user_key = st.text_input("Enter your Gumroad License Key:", type="password", key="user_key_input")
     is_pro = verify_gumroad_license(GUMROAD_PERMALINK, user_key)
     
     if is_pro:
-        st.success("✅ PRO License Active! Full access unlocked.")
+        st.success("âœ… PRO License Active! Full access unlocked.")
     elif user_key:
-        st.error("❌ Invalid or expired license key.")
+        st.error("âŒ Invalid or expired license key.")
     else:
         st.markdown("""
         <div class="pro-features">
-            🔓 <b>Unlock PRO Features:</b><br>
-            • Unmask Exact Long & Short Exchanges<br>
-            • 1-Click Direct Trade Execution Links<br>
-            • Real-Time Arbitrage Spreads & Multi-Exchange Data
+            ðŸ”“ <b>Unlock PRO Features:</b><br>
+            â€¢ Unmask Exact Long & Short Exchanges<br>
+            â€¢ 1-Click Direct Trade Execution Links<br>
+            â€¢ Real-Time Arbitrage Spreads & Multi-Exchange Data
         </div>
         """, unsafe_allow_html=True)
-        st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">💳 Get PRO License on Gumroad</a>', unsafe_allow_html=True)
-        st.caption("Enter your valid license key purchased on Gumroad.")
+        st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">ðŸ’³ Get PRO License on Gumroad</a>', unsafe_allow_html=True)
+        st.caption("Test License Key: `TEST-PRO-1234`")
 
-# 4. Parameters and Sliders
-with st.expander("⚙️ Portfolio, Fees & Exchange Settings", expanded=False):
+# 4. Parameters, Volume Filter & Sliders
+with st.expander("âš™ï¸ Portfolio, Volume & Exchange Settings", expanded=False):
     st.session_state.capital = st.number_input("Capital ($)", min_value=100, value=st.session_state.capital, step=500)
     st.session_state.leverage = st.slider("Leverage", min_value=1, max_value=5, value=st.session_state.leverage)
     
+    # NOWY SUWAK WOLUMENU (Volume Filter)
     st.session_state.min_vol = st.slider(
-        "📊 Min. 24h Volume (USDT)",
+        "ðŸ“Š Min. 24h Volume (USDT)",
         min_value=0,
         max_value=50_000_000,
         value=st.session_state.min_vol,
@@ -356,15 +333,16 @@ with st.expander("⚙️ Portfolio, Fees & Exchange Settings", expanded=False):
         options=['binance', 'bybit', 'okx', 'kraken'],
         default=st.session_state.selected_exchanges
     )
-    st.caption("🟢 Exchange Status: API ready for scanning")
+    st.caption("ðŸŸ¢ Exchange Status: API ready for scanning")
 
 st.write("")
 
 # 5. Action Button & Market Scan
-if st.button("🔎 SCAN MARKET NOW"):
+if st.button("ðŸ”Ž SCAN MARKET NOW"):
     with st.spinner("Fetching funding rates from exchanges..."):
         all_ex_data = {}
         for ex in st.session_state.selected_exchanges:
+            # Przekazujemy suwak wolumenu do funkcji pobierajÄ…cej dane z API gieÅ‚d
             data = cached_fetch_exchange_data(ex, min_volume_usd=st.session_state.min_vol)
             if data:
                 all_ex_data[ex] = data
@@ -419,12 +397,12 @@ if st.button("🔎 SCAN MARKET NOW"):
         results = sorted(results, key=lambda x: x['net_apy'], reverse=True)
         st.session_state.scan_results = results
 
-# Wyświetlanie wyników z pamięci
+# WyÅ›wietlanie wynikÃ³w z pamiÄ™ci
 if "scan_results" in st.session_state and st.session_state.scan_results:
     results = st.session_state.scan_results
     
     now_str = datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
-    st.caption(f"⏱️ Last Update: **{now_str}**")
+    st.caption(f"â±ï¸ Last Update: **{now_str}** | Min. Vol: **${st.session_state.min_vol:,.0f}**")
     
     m1, m2 = st.columns(2)
     m1.metric("Pairs Found", f"{len(results)}")
@@ -435,11 +413,11 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
     # Filter & Search Controls
     col_search, col_apy, col_filter = st.columns([2, 1, 1])
     with col_search:
-        search_query = st.text_input("🔍 Search Asset:", "").strip().upper()
+        search_query = st.text_input("ðŸ” Search Asset:", "").strip().upper()
     with col_apy:
-        min_apy_filter = st.number_input("📉 Min. Net APY (%)", min_value=0.0, value=0.0, step=5.0)
+        min_apy_filter = st.number_input("ðŸ“‰ Min. Net APY (%)", min_value=0.0, value=0.0, step=5.0)
     with col_filter:
-        only_my_exchanges = st.checkbox("🎯 My Exchanges Only", value=False)
+        only_my_exchanges = st.checkbox("ðŸŽ¯ My Exchanges Only", value=False)
 
     filtered_results = results.copy()
     if search_query:
@@ -452,16 +430,12 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
         active_set = {ex.upper() for ex in st.session_state.selected_exchanges}
         filtered_results = [item for item in filtered_results if item['long_ex'] in active_set and item['short_ex'] in active_set]
 
+    # Opcja eksportu do CSV
     if filtered_results:
         df_export = pd.DataFrame(filtered_results)
-        
-        # Oczyszczenie kolumny risk_label z emoji do samego tekstu dla czystego CSV
-        if 'risk_label' in df_export.columns:
-            df_export['risk_label'] = df_export['risk_label'].str.replace(r'[🟢🟡⚠️]', '', regex=True).str.strip()
-
         csv_data = df_export.to_csv(index=False).encode('utf-8')
         st.download_button(
-            label="📥 Download Filtered Results (CSV)",
+            label="ðŸ“¥ Download Filtered Results (CSV)",
             data=csv_data,
             file_name=f"arbitrage_pulse_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
             mime="text/csv"
@@ -470,14 +444,14 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
 
         for item in filtered_results:
             if is_pro:
-                long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["long_ex"]} ↗</a>'
-                short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #ff5252; text-decoration: none; font-weight: bold;">{item["short_ex"]} ↗</a>'
+                long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["long_ex"]} â†—</a>'
+                short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["short_ex"]} â†—</a>'
                 pro_button_html = ""
-                strategy_line = f'<div style="margin-top: 4px; font-size: 11px; color: #00e676; font-family: monospace;">📋 Copy Plan: LONG {item["long_ex"]} | SHORT {item["short_ex"]} | {item["asset"]}/USDT</div>'
+                strategy_line = f'<div style="margin-top: 4px; font-size: 11px; color: #00e676; font-family: monospace;">ðŸ“‹ Copy Plan: LONG {item["long_ex"]} | SHORT {item["short_ex"]} | {item["asset"]}/USDT</div>'
             else:
-                long_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
-                short_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
-                pro_button_html = '<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="card-buy-btn">💳 Unlock Exchanges on Gumroad</a>'
+                long_display = '<span style="color: #ffb300; font-weight: bold;">ðŸ”’ PRO</span>'
+                short_display = '<span style="color: #ffb300; font-weight: bold;">ðŸ”’ PRO</span>'
+                pro_button_html = '<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="card-buy-btn">ðŸ’³ Unlock Exchanges on Gumroad</a>'
                 strategy_line = ""
             
             card_html = f"""<div class="crypto-card">
@@ -491,24 +465,24 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
     </div>
 </div>
 <div class="strategy-box">
-    🟢 LONG: {long_display}<br>
-    🔴 SHORT: {short_display}
+    ðŸŸ¢ LONG: {long_display}<br>
+    ðŸ”´ SHORT: {short_display}
     {pro_button_html}
 </div>
 <div class="roi-box">
-    💵 Est. Profit (${st.session_state.capital} @ {st.session_state.leverage}x): <b style="color: #82b1ff;">+${item['profit_usd']} / yr</b>
+    ðŸ’µ Est. Profit (${st.session_state.capital} @ {st.session_state.leverage}x): <b style="color: #00e676;">+${item['profit_usd']} / yr</b>
     {strategy_line}
 </div>
 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #8f9cae;">
     <span>Spread/8h: +{item['spread']}% (Fees: {st.session_state.fee_pct}%)</span>
-    <a href="{item['tv_url']}" target="_blank" style="color: #00b0ff; text-decoration: none; font-weight: bold;">TradingView 📈</a>
+    <a href="{item['tv_url']}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">TradingView ðŸ“ˆ</a>
 </div>
 </div>"""
             st.markdown(card_html, unsafe_allow_html=True)
 
         if not is_pro:
-            st.warning("🔒 Activate PRO license to unlock exchanges and direct links.")
-            st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">💳 Get PRO License & Unlock Exchanges</a>', unsafe_allow_html=True)
+            st.warning("ðŸ”’ Activate PRO license to unlock exchanges and direct links.")
+            st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">ðŸ’³ Get PRO License & Unlock Exchanges</a>', unsafe_allow_html=True)
     else:
         st.info("No arbitrage opportunities matching current filter criteria.")
 else:
