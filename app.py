@@ -89,7 +89,7 @@ if "fee_pct" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling - Bezpośrednie wygaszenie wszystkich jasnych kontenerów Streamlit
+# 2. CSS Styling - Twój oryginalny zestaw klas
 st.markdown("""
     <style>
     .stApp {
@@ -108,36 +108,7 @@ st.markdown("""
         padding-top: 1rem !important;
         background-color: #0b0e14 !important;
     }
-
-    /* Usunięcie białych teł w podklasach st.multiselect (Active Exchanges) */
-    div[data-baseweb="select"], 
-    div[data-baseweb="select"] *,
-    div[class*="ValueContainer"],
-    div[class*="ControlGroup"],
-    div[class*="InputContainer"] {
-        background-color: #151a24 !important;
-        color: #ffffff !important;
-        border-color: #2a354d !important;
-    }
-
-    /* Usunięcie jasnego tła w kontenerach number_input oraz przyciskach + / - */
-    div[data-testid="stNumberInputContainer"],
-    div[data-testid="stNumberInputContainer"] *,
-    button[aria-label="Increase value"],
-    button[aria-label="Decrease value"],
-    button[data-testid="stNumberInputStepDown"],
-    button[data-testid="stNumberInputStepUp"] {
-        background-color: #151a24 !important;
-        color: #ffffff !important;
-        border-color: #2a354d !important;
-    }
-
-    div[data-testid="stNumberInputStepDown"] svg, 
-    div[data-testid="stNumberInputStepUp"] svg {
-        fill: #ffffff !important;
-        color: #ffffff !important;
-    }
-
+    
     div[data-testid="stMetricLabel"] p, label, .stTextInput label, span, p {
         color: #f1f3f6 !important;
         font-weight: 600 !important;
@@ -344,6 +315,7 @@ with st.expander("⚙️ Portfolio, Fees & Exchange Settings", expanded=False):
     st.session_state.capital = st.number_input("Capital ($)", min_value=100, value=st.session_state.capital, step=500)
     st.session_state.leverage = st.slider("Leverage", min_value=1, max_value=5, value=st.session_state.leverage)
     
+    # Suwak wolumenu
     st.session_state.min_vol = st.slider(
         "📊 Min. 24h Volume (USDT)",
         min_value=0,
