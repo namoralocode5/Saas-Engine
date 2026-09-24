@@ -89,7 +89,7 @@ if "fee_pct" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling - Przywrócenie ostrych, eleganckich ramek dla pól
+# 2. CSS Styling
 st.markdown("""
     <style>
     .stApp {
@@ -114,7 +114,6 @@ st.markdown("""
         font-weight: 600 !important;
     }
     
-    /* Wyraźne ramki dla pól tekstowych i liczbowych */
     div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input {
         background-color: #151a24 !important;
         color: #ffffff !important;
@@ -128,14 +127,12 @@ st.markdown("""
         background-color: #151a24 !important;
     }
 
-    /* Ramka dla pola Active Exchanges (multiselect) */
     div[data-baseweb="select"] > div {
         background-color: #151a24 !important;
         border: 1px solid #2a354d !important;
         border-radius: 8px !important;
     }
 
-    /* Przycisk pobierania CSV z ramką */
     div.stDownloadButton > button {
         background-color: #151a24 !important;
         color: #ffffff !important;
@@ -344,7 +341,6 @@ with st.expander("⚙️ Portfolio, Fees & Exchange Settings", expanded=False):
     st.session_state.capital = st.number_input("Capital ($)", min_value=100, value=st.session_state.capital, step=500)
     st.session_state.leverage = st.slider("Leverage", min_value=1, max_value=5, value=st.session_state.leverage)
     
-    # Suwak wolumenu
     st.session_state.min_vol = st.slider(
         "📊 Min. 24h Volume (USDT)",
         min_value=0,
@@ -460,9 +456,14 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
 
     if filtered_results:
         df_export = pd.DataFrame(filtered_results)
+        
+        # Oczyszczenie kolumny risk_label z emoji do samego tekstu dla czystego CSV
+        if 'risk_label' in df_export.columns:
+            df_export['risk_label'] = df_export['risk_label'].str.replace(r'[🟢🟡⚠️]', '', regex=True).str.strip()
+
         csv_data = df_export.to_csv(index=False).encode('utf-8')
         st.download_button(
-            label="Download Filtered Results (CSV)",
+            label="📥 Download Filtered Results (CSV)",
             data=csv_data,
             file_name=f"arbitrage_pulse_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
             mime="text/csv"
