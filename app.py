@@ -89,7 +89,7 @@ if "fee_pct" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling - Czysty układ kart i elementów
+# 2. CSS Styling - Przywrócenie ostrych, eleganckich ramek dla pól
 st.markdown("""
     <style>
     .stApp {
@@ -114,6 +114,42 @@ st.markdown("""
         font-weight: 600 !important;
     }
     
+    /* Wyraźne ramki dla pól tekstowych i liczbowych */
+    div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input {
+        background-color: #151a24 !important;
+        color: #ffffff !important;
+        border: 1px solid #2a354d !important;
+        border-radius: 8px !important;
+    }
+
+    div[data-testid="stNumberInputContainer"] {
+        border: 1px solid #2a354d !important;
+        border-radius: 8px !important;
+        background-color: #151a24 !important;
+    }
+
+    /* Ramka dla pola Active Exchanges (multiselect) */
+    div[data-baseweb="select"] > div {
+        background-color: #151a24 !important;
+        border: 1px solid #2a354d !important;
+        border-radius: 8px !important;
+    }
+
+    /* Przycisk pobierania CSV z ramką */
+    div.stDownloadButton > button {
+        background-color: #151a24 !important;
+        color: #ffffff !important;
+        border: 1px solid #2a354d !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        width: 100% !important;
+    }
+    div.stDownloadButton > button:hover {
+        background-color: #1c2333 !important;
+        border-color: #2962ff !important;
+        color: #00b0ff !important;
+    }
+
     div[data-testid="stExpander"] {
         background-color: #151a24 !important;
         border: 1px solid #232a3b !important;
