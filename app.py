@@ -89,7 +89,7 @@ if "fee_pct" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling - Complete High Contrast Dark FinTech Theme
+# 2. CSS Styling - Complete Dark Mode & Custom Multiselect / NumberInput Fixes
 st.markdown("""
     <style>
     .stApp {
@@ -109,16 +109,57 @@ st.markdown("""
         background-color: #0b0e14 !important;
     }
     
-    /* Naprawa kontrastu i wyglądu przycisków + / - w st.number_input */
+    /* 1. Usunięcie białego tła ze st.multiselect (Active Exchanges) */
+    div[data-baseweb="select"], 
+    div[data-baseweb="select"] > div,
+    div[data-baseweb="select"] > div > div {
+        background-color: #151a24 !important;
+        border-color: #2a354d !important;
+        color: #ffffff !important;
+    }
+
+    /* Tłumienie białego kontenera pod tagami w multiselect */
+    div[data-baseweb="select"] [class*="valueContainer"] {
+        background-color: #151a24 !important;
+    }
+
+    /* Tagi giełd (np. binance, bybit, okx, kraken) */
+    span[data-baseweb="tag"] {
+        background-color: #1c2333 !important;
+        border: 1px solid #00e676 !important;
+        border-radius: 6px !important;
+    }
+    span[data-baseweb="tag"] span {
+        color: #ffffff !important;
+    }
+    span[data-baseweb="tag"] svg {
+        fill: #ffffff !important;
+    }
+
+    /* Rozwijane menu giełd */
+    div[data-baseweb="popover"], div[data-baseweb="menu"], ul[role="listbox"] {
+        background-color: #151a24 !important;
+        border: 1px solid #2a354d !important;
+    }
+    li[role="option"] {
+        background-color: #151a24 !important;
+        color: #ffffff !important;
+    }
+    div[aria-selected="true"] {
+        background-color: #1c2333 !important;
+        color: #ffffff !important;
+    }
+
+    /* 2. Stylizacja przycisków + / - w st.number_input */
     div[data-testid="stNumberInputStepDown"], 
     div[data-testid="stNumberInputStepUp"],
     button[aria-label="Increase value"],
     button[aria-label="Decrease value"],
     button[data-testid="stNumberInputStepDown"],
     button[data-testid="stNumberInputStepUp"] {
-        background-color: #1e2638 !important;
+        background-color: #1c2333 !important;
         color: #ffffff !important;
-        border: 1px solid #2962ff !important;
+        border: 1px solid #00e676 !important;
     }
     
     div[data-testid="stNumberInputStepDown"] svg, 
@@ -131,28 +172,7 @@ st.markdown("""
         stroke-width: 2px !important;
     }
 
-    /* Pełne wyeliminowanie białych teł ze st.multiselect oraz rozwijanych menu */
-    div[data-baseweb="select"] > div {
-        background-color: #151a24 !important;
-        border-color: #2a354d !important;
-        color: #ffffff !important;
-    }
-    
-    div[data-baseweb="popover"], div[data-baseweb="menu"], ul[role="listbox"] {
-        background-color: #151a24 !important;
-        border: 1px solid #2a354d !important;
-    }
-
-    li[role="option"] {
-        background-color: #151a24 !important;
-        color: #ffffff !important;
-    }
-
-    div[aria-selected="true"] {
-        background-color: #1c2333 !important;
-        color: #ffffff !important;
-    }
-
+    /* 3. Inputy i ogólne pola tekstowe */
     div[data-baseweb="input"], div[data-baseweb="base-input"] {
         background-color: #151a24 !important;
         border-color: #2a354d !important;
@@ -170,22 +190,23 @@ st.markdown("""
         border-radius: 8px !important;
     }
 
+    /* 4. Przycisk pobierania CSV */
     div.stDownloadButton > button {
         background: linear-gradient(135deg, #151a24 0%, #1c2333 100%) !important;
-        color: #00b0ff !important;
-        border: 1px solid #2962ff !important;
+        color: #00e676 !important;
+        border: 1px solid #00e676 !important;
         border-radius: 8px !important;
         font-weight: 700 !important;
         height: 42px !important;
     }
     div.stDownloadButton > button:hover {
-        background: #2962ff !important;
-        color: #ffffff !important;
+        background: #00e676 !important;
+        color: #000000 !important;
     }
 
     div[data-testid="stMetricValue"] {
         font-size: 20px !important;
-        color: #00b0ff !important;
+        color: #00e676 !important;
     }
     
     div[data-testid="stMetricLabel"] p, label, .stTextInput label, span, p {
@@ -205,12 +226,12 @@ st.markdown("""
     
     .timer-banner {
         background: linear-gradient(90deg, #1e2638 0%, #111622 100%);
-        border: 1px solid #2962ff;
+        border: 1px solid #00e676;
         border-radius: 10px;
         padding: 8px 12px;
         text-align: center;
         font-size: 13px;
-        color: #82b1ff !important;
+        color: #00e676 !important;
         margin-bottom: 12px;
     }
     
@@ -234,13 +255,13 @@ st.markdown("""
     }
 
     .badge-stable {
-        background: rgba(41, 98, 255, 0.15) !important;
-        color: #82b1ff !important;
+        background: rgba(0, 230, 118, 0.15) !important;
+        color: #00e676 !important;
         padding: 2px 6px !important;
         border-radius: 4px !important;
         font-size: 10px !important;
         font-weight: 700 !important;
-        border: 1px solid rgba(41, 98, 255, 0.3) !important;
+        border: 1px solid rgba(0, 230, 118, 0.3) !important;
     }
 
     .badge-spike {
@@ -264,12 +285,12 @@ st.markdown("""
     
     .roi-box {
         background-color: #121929 !important;
-        border: 1px dashed #2962ff !important;
+        border: 1px dashed #00e676 !important;
         padding: 8px 12px !important;
         border-radius: 6px !important;
         margin-bottom: 10px !important;
         font-size: 12px !important;
-        color: #82b1ff !important;
+        color: #00e676 !important;
     }
 
     .stButton>button {
@@ -278,17 +299,17 @@ st.markdown("""
         height: 50px !important;
         font-size: 16px !important;
         font-weight: 700 !important;
-        background: linear-gradient(135deg, #2962ff 0%, #00b0ff 100%) !important;
-        color: #ffffff !important;
+        background: linear-gradient(135deg, #00e676 0%, #00b0ff 100%) !important;
+        color: #000000 !important;
         border: none !important;
-        box-shadow: 0 4px 15px rgba(41, 98, 255, 0.4) !important;
+        box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3) !important;
     }
     
     .buy-btn {
         display: inline-block;
         width: 100%;
         text-align: center;
-        background: #ff9100 !important;
+        background: #00e676 !important;
         color: #000000 !important;
         font-weight: 800;
         padding: 12px;
@@ -301,7 +322,7 @@ st.markdown("""
         display: block;
         width: 100%;
         text-align: center;
-        background: linear-gradient(135deg, #ff9100 0%, #ff6d00 100%) !important;
+        background: linear-gradient(135deg, #00e676 0%, #00b0ff 100%) !important;
         color: #000000 !important;
         font-weight: 800;
         padding: 6px 10px;
@@ -326,18 +347,18 @@ st.markdown("""
     align-items: center; 
     justify-content: space-between;
     background: #0f131a; 
-    border: 1px solid #2962ff; 
+    border: 1px solid #00e676; 
     border-radius: 10px; 
     padding: 10px 14px; 
     margin-bottom: 16px;
-    box-shadow: 0 4px 15px rgba(41, 98, 255, 0.15);
+    box-shadow: 0 4px 15px rgba(0, 230, 118, 0.15);
 ">
     <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-size: 18px; color: #2962ff;">⚡ <b>NC</b></span>
+        <span style="font-size: 18px; color: #00e676;">⚡ <b>NC</b></span>
         <span style="color: #4a5568;">|</span>
         <span style="font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #e2e8f0;">NAMORALO CODE</span>
     </div>
-    <span style="font-size: 10px; font-weight: 700; background: #2962ff; color: #fff; padding: 2px 6px; border-radius: 4px;">OFFICIAL</span>
+    <span style="font-size: 10px; font-weight: 700; background: #00e676; color: #000; padding: 2px 6px; border-radius: 4px;">OFFICIAL</span>
 </div>
 """, unsafe_allow_html=True)
 
@@ -469,7 +490,7 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
     now_str = datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
     st.caption(f"⏱️ Last Update: **{now_str}** | Min. Vol: **${st.session_state.min_vol:,.0f}**")
     
-    # Przejrzysta sekcja wyszukiwania i filtrów
+    # Sekcja wyszukiwania i filtrów
     col_search, col_apy, col_filter = st.columns([2, 1, 1])
     with col_search:
         search_query = st.text_input("🔍 Search Asset:", "").strip().upper()
@@ -491,7 +512,7 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
 
     st.write("")
     
-    # Układ metryk
+    # Metryki
     m1, m2 = st.columns(2)
     m1.metric("Filtered Pairs", f"{len(filtered_results)}")
     if filtered_results:
@@ -518,7 +539,7 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
                 long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["long_ex"]} ↗</a>'
                 short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #ff5252; text-decoration: none; font-weight: bold;">{item["short_ex"]} ↗</a>'
                 pro_button_html = ""
-                strategy_line = f'<div style="margin-top: 4px; font-size: 11px; color: #82b1ff; font-family: monospace;">📋 Copy Plan: LONG {item["long_ex"]} | SHORT {item["short_ex"]} | {item["asset"]}/USDT</div>'
+                strategy_line = f'<div style="margin-top: 4px; font-size: 11px; color: #00e676; font-family: monospace;">📋 Copy Plan: LONG {item["long_ex"]} | SHORT {item["short_ex"]} | {item["asset"]}/USDT</div>'
             else:
                 long_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
                 short_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
@@ -541,12 +562,12 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
     {pro_button_html}
 </div>
 <div class="roi-box">
-    💵 Est. Profit (${st.session_state.capital} @ {st.session_state.leverage}x): <b style="color: #82b1ff;">+${item['profit_usd']} / yr</b>
+    💵 Est. Profit (${st.session_state.capital} @ {st.session_state.leverage}x): <b style="color: #00e676;">+${item['profit_usd']} / yr</b>
     {strategy_line}
 </div>
 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #8f9cae;">
     <span>Spread/8h: +{item['spread']}% (Fees: {st.session_state.fee_pct}%)</span>
-    <a href="{item['tv_url']}" target="_blank" style="color: #00b0ff; text-decoration: none; font-weight: bold;">TradingView 📈</a>
+    <a href="{item['tv_url']}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">TradingView 📈</a>
 </div>
 </div>"""
             st.markdown(card_html, unsafe_allow_html=True)
