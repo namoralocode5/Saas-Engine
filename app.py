@@ -89,7 +89,7 @@ if "fee_pct" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling - Dark Mode Fixes & No White Backgrounds
+# 2. CSS Styling - Complete High Contrast Dark FinTech Theme
 st.markdown("""
     <style>
     .stApp {
@@ -109,8 +109,51 @@ st.markdown("""
         background-color: #0b0e14 !important;
     }
     
-    /* Usunięcie białych teł w inputach, selektorach i przyciskach Streamlita */
-    div[data-baseweb="input"], div[data-baseweb="base-input"], div[data-baseweb="select"] {
+    /* Naprawa kontrastu i wyglądu przycisków + / - w st.number_input */
+    div[data-testid="stNumberInputStepDown"], 
+    div[data-testid="stNumberInputStepUp"],
+    button[aria-label="Increase value"],
+    button[aria-label="Decrease value"],
+    button[data-testid="stNumberInputStepDown"],
+    button[data-testid="stNumberInputStepUp"] {
+        background-color: #1e2638 !important;
+        color: #ffffff !important;
+        border: 1px solid #2962ff !important;
+    }
+    
+    div[data-testid="stNumberInputStepDown"] svg, 
+    div[data-testid="stNumberInputStepUp"] svg,
+    button[aria-label="Increase value"] svg,
+    button[aria-label="Decrease value"] svg {
+        fill: #ffffff !important;
+        color: #ffffff !important;
+        stroke: #ffffff !important;
+        stroke-width: 2px !important;
+    }
+
+    /* Pełne wyeliminowanie białych teł ze st.multiselect oraz rozwijanych menu */
+    div[data-baseweb="select"] > div {
+        background-color: #151a24 !important;
+        border-color: #2a354d !important;
+        color: #ffffff !important;
+    }
+    
+    div[data-baseweb="popover"], div[data-baseweb="menu"], ul[role="listbox"] {
+        background-color: #151a24 !important;
+        border: 1px solid #2a354d !important;
+    }
+
+    li[role="option"] {
+        background-color: #151a24 !important;
+        color: #ffffff !important;
+    }
+
+    div[aria-selected="true"] {
+        background-color: #1c2333 !important;
+        color: #ffffff !important;
+    }
+
+    div[data-baseweb="input"], div[data-baseweb="base-input"] {
         background-color: #151a24 !important;
         border-color: #2a354d !important;
     }
@@ -127,7 +170,6 @@ st.markdown("""
         border-radius: 8px !important;
     }
 
-    /* Przycisk pobierania CSV bez białego tła */
     div.stDownloadButton > button {
         background: linear-gradient(135deg, #151a24 0%, #1c2333 100%) !important;
         color: #00b0ff !important;
@@ -449,7 +491,7 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
 
     st.write("")
     
-    # Czysty układ metryk w 2 kolumnach
+    # Układ metryk
     m1, m2 = st.columns(2)
     m1.metric("Filtered Pairs", f"{len(filtered_results)}")
     if filtered_results:
