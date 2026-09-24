@@ -89,7 +89,7 @@ if "fee_pct" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling - Twój oryginalny zestaw klas
+# 2. CSS Styling - Oryginalny styl + poprawka widoczności przycisku CSV
 st.markdown("""
     <style>
     .stApp {
@@ -119,6 +119,21 @@ st.markdown("""
         color: #ffffff !important;
         border: 1px solid #2a354d !important;
         border-radius: 8px !important;
+    }
+
+    /* Dopasowanie przycisku pobierania CSV do reszty ciemnych pól */
+    div.stDownloadButton > button {
+        background-color: #151a24 !important;
+        color: #ffffff !important;
+        border: 1px solid #2a354d !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        width: 100% !important;
+    }
+    div.stDownloadButton > button:hover {
+        background-color: #1c2333 !important;
+        border-color: #2962ff !important;
+        color: #00b0ff !important;
     }
 
     div[data-testid="stExpander"] {
