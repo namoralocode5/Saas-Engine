@@ -89,7 +89,7 @@ if "fee_pct" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling - Usunięcie białego tła giełd, czerwonych ramek i suwaków
+# 2. CSS Styling - Czysty układ kart i elementów
 st.markdown("""
     <style>
     .stApp {
@@ -114,55 +114,6 @@ st.markdown("""
         font-weight: 600 !important;
     }
     
-    /* Pola tekstowe i liczbowe z niebieskim focusem zamiast czerwonego */
-    div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input {
-        background-color: #151a24 !important;
-        color: #ffffff !important;
-        border: 1px solid #2a354d !important;
-        border-radius: 8px !important;
-    }
-    
-    div[data-baseweb="input"]:focus-within, div[data-baseweb="base-input"]:focus-within {
-        border-color: #2962ff !important;
-        box-shadow: 0 0 0 1px #2962ff !important;
-    }
-
-    /* CAŁKOWITE USUNIĘCIE BIAŁEGO TŁA W ACTIVE EXCHANGES (multiselect) */
-    div[data-baseweb="select"], 
-    div[data-baseweb="select"] > div,
-    div[data-baseweb="select"] [class*="ValueContainer"] {
-        background-color: #151a24 !important;
-        border: 1px solid #2a354d !important;
-        border-radius: 8px !important;
-        color: #ffffff !important;
-    }
-
-    /* Zmiana koloru suwaków z czerwonego na niebieski/zielony */
-    div[data-baseweb="slider"] div[role="slider"] {
-        background-color: #2962ff !important;
-        border-color: #00b0ff !important;
-    }
-    
-    /* Pasek wypełnienia suwaka */
-    div[data-baseweb="slider"] div[data-testid="stSliderBar"] {
-        background-color: #2962ff !important;
-    }
-
-    /* Przycisk pobierania CSV w ciemnym, spójnym stylu */
-    div.stDownloadButton > button {
-        background-color: #151a24 !important;
-        color: #ffffff !important;
-        border: 1px solid #2a354d !important;
-        border-radius: 8px !important;
-        font-weight: 600 !important;
-        width: 100% !important;
-    }
-    div.stDownloadButton > button:hover {
-        background-color: #1c2333 !important;
-        border-color: #2962ff !important;
-        color: #00b0ff !important;
-    }
-
     div[data-testid="stExpander"] {
         background-color: #151a24 !important;
         border: 1px solid #232a3b !important;
@@ -522,7 +473,7 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
 
         if not is_pro:
             st.warning("🔒 Activate PRO license to unlock exchanges and direct links.")
-            st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">💳 Get PRO License & Unlock Exchanges</a>', unsafe_label=True)
+            st.markdown('<a href="https://namoralocode.gumroad.com/l/arbitrage-pulse-pro" target="_blank" class="buy-btn">💳 Get PRO License & Unlock Exchanges</a>', unsafe_allow_html=True)
     else:
         st.info("No arbitrage opportunities matching current filter criteria.")
 else:
