@@ -83,13 +83,13 @@ if "capital" not in st.session_state:
 if "leverage" not in st.session_state:
     st.session_state.leverage = 1
 if "min_vol" not in st.session_state:
-    st.session_state.min_vol = 1000000  # Domyślnie 1M USD dla płynności
+    st.session_state.min_vol = 100000
 if "fee_pct" not in st.session_state:
     st.session_state.fee_pct = 0.04
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling - Complete FinTech Dark Mode & Mobile Bar Fix
+# 2. CSS Styling - Original FinTech Dark Mode & Blue/Gold Accent Restoration
 st.markdown("""
     <style>
     .stApp {
@@ -133,12 +133,12 @@ st.markdown("""
     
     .timer-banner {
         background: linear-gradient(90deg, #1e2638 0%, #111622 100%);
-        border: 1px solid #00e676;
+        border: 1px solid #2962ff;
         border-radius: 10px;
         padding: 8px 12px;
         text-align: center;
         font-size: 13px;
-        color: #00e676 !important;
+        color: #82b1ff !important;
         margin-bottom: 12px;
     }
     
@@ -162,13 +162,13 @@ st.markdown("""
     }
 
     .badge-stable {
-        background: rgba(0, 230, 118, 0.15) !important;
-        color: #00e676 !important;
+        background: rgba(41, 98, 255, 0.15) !important;
+        color: #82b1ff !important;
         padding: 2px 6px !important;
         border-radius: 4px !important;
         font-size: 10px !important;
         font-weight: 700 !important;
-        border: 1px solid rgba(0, 230, 118, 0.3) !important;
+        border: 1px solid rgba(41, 98, 255, 0.3) !important;
     }
 
     .badge-spike {
@@ -192,12 +192,12 @@ st.markdown("""
     
     .roi-box {
         background-color: #121929 !important;
-        border: 1px dashed #00e676 !important;
+        border: 1px dashed #2962ff !important;
         padding: 8px 12px !important;
         border-radius: 6px !important;
         margin-bottom: 10px !important;
         font-size: 12px !important;
-        color: #00e676 !important;
+        color: #82b1ff !important;
     }
 
     .stButton>button {
@@ -206,22 +206,22 @@ st.markdown("""
         height: 50px !important;
         font-size: 16px !important;
         font-weight: 700 !important;
-        background: linear-gradient(135deg, #00e676 0%, #00b0ff 100%) !important;
-        color: #000000 !important;
+        background: linear-gradient(135deg, #2962ff 0%, #00b0ff 100%) !important;
+        color: #ffffff !important;
         border: none !important;
-        box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3) !important;
+        box-shadow: 0 4px 15px rgba(41, 98, 255, 0.4) !important;
     }
     
     div[data-testid="stMetricValue"] {
         font-size: 20px !important;
-        color: #00e676 !important;
+        color: #00b0ff !important;
     }
     
     .buy-btn {
         display: inline-block;
         width: 100%;
         text-align: center;
-        background: #00e676 !important;
+        background: #ff9100 !important;
         color: #000000 !important;
         font-weight: 800;
         padding: 12px;
@@ -234,7 +234,7 @@ st.markdown("""
         display: block;
         width: 100%;
         text-align: center;
-        background: linear-gradient(135deg, #00e676 0%, #00b0ff 100%) !important;
+        background: linear-gradient(135deg, #ff9100 0%, #ff6d00 100%) !important;
         color: #000000 !important;
         font-weight: 800;
         padding: 6px 10px;
@@ -259,18 +259,18 @@ st.markdown("""
     align-items: center; 
     justify-content: space-between;
     background: #0f131a; 
-    border: 1px solid #00e676; 
+    border: 1px solid #2962ff; 
     border-radius: 10px; 
     padding: 10px 14px; 
     margin-bottom: 16px;
-    box-shadow: 0 4px 15px rgba(0, 230, 118, 0.15);
+    box-shadow: 0 4px 15px rgba(41, 98, 255, 0.15);
 ">
     <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-size: 18px; color: #00e676;">⚡ <b>NC</b></span>
+        <span style="font-size: 18px; color: #2962ff;">⚡ <b>NC</b></span>
         <span style="color: #4a5568;">|</span>
         <span style="font-size: 13px; font-weight: 800; letter-spacing: 1px; color: #e2e8f0;">NAMORALO CODE</span>
     </div>
-    <span style="font-size: 10px; font-weight: 700; background: #00e676; color: #000; padding: 2px 6px; border-radius: 4px;">OFFICIAL</span>
+    <span style="font-size: 10px; font-weight: 700; background: #2962ff; color: #fff; padding: 2px 6px; border-radius: 4px;">OFFICIAL</span>
 </div>
 """, unsafe_allow_html=True)
 
@@ -315,7 +315,7 @@ with st.expander("⚙️ Portfolio, Volume & Exchange Settings", expanded=False)
     st.session_state.capital = st.number_input("Capital ($)", min_value=100, value=st.session_state.capital, step=500)
     st.session_state.leverage = st.slider("Leverage", min_value=1, max_value=5, value=st.session_state.leverage)
     
-    # NOWY SUWAK WOLUMENU (Volume Filter)
+    # Suwak minimalnego wolumenu (Volume Filter)
     st.session_state.min_vol = st.slider(
         "📊 Min. 24h Volume (USDT)",
         min_value=0,
@@ -342,7 +342,6 @@ if st.button("🔎 SCAN MARKET NOW"):
     with st.spinner("Fetching funding rates from exchanges..."):
         all_ex_data = {}
         for ex in st.session_state.selected_exchanges:
-            # Przekazujemy suwak wolumenu do funkcji pobierającej dane z API giełd
             data = cached_fetch_exchange_data(ex, min_volume_usd=st.session_state.min_vol)
             if data:
                 all_ex_data[ex] = data
@@ -445,9 +444,9 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
         for item in filtered_results:
             if is_pro:
                 long_display = f'<a href="{item["long_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["long_ex"]} ↗</a>'
-                short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">{item["short_ex"]} ↗</a>'
+                short_display = f'<a href="{item["short_url"]}" target="_blank" style="color: #ff5252; text-decoration: none; font-weight: bold;">{item["short_ex"]} ↗</a>'
                 pro_button_html = ""
-                strategy_line = f'<div style="margin-top: 4px; font-size: 11px; color: #00e676; font-family: monospace;">📋 Copy Plan: LONG {item["long_ex"]} | SHORT {item["short_ex"]} | {item["asset"]}/USDT</div>'
+                strategy_line = f'<div style="margin-top: 4px; font-size: 11px; color: #82b1ff; font-family: monospace;">📋 Copy Plan: LONG {item["long_ex"]} | SHORT {item["short_ex"]} | {item["asset"]}/USDT</div>'
             else:
                 long_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
                 short_display = '<span style="color: #ffb300; font-weight: bold;">🔒 PRO</span>'
@@ -470,12 +469,12 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
     {pro_button_html}
 </div>
 <div class="roi-box">
-    💵 Est. Profit (${st.session_state.capital} @ {st.session_state.leverage}x): <b style="color: #00e676;">+${item['profit_usd']} / yr</b>
+    💵 Est. Profit (${st.session_state.capital} @ {st.session_state.leverage}x): <b style="color: #82b1ff;">+${item['profit_usd']} / yr</b>
     {strategy_line}
 </div>
 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #8f9cae;">
     <span>Spread/8h: +{item['spread']}% (Fees: {st.session_state.fee_pct}%)</span>
-    <a href="{item['tv_url']}" target="_blank" style="color: #00e676; text-decoration: none; font-weight: bold;">TradingView 📈</a>
+    <a href="{item['tv_url']}" target="_blank" style="color: #00b0ff; text-decoration: none; font-weight: bold;">TradingView 📈</a>
 </div>
 </div>"""
             st.markdown(card_html, unsafe_allow_html=True)
