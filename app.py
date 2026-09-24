@@ -89,7 +89,7 @@ if "fee_pct" not in st.session_state:
 if "selected_exchanges" not in st.session_state:
     st.session_state.selected_exchanges = ['binance', 'bybit', 'okx', 'kraken']
 
-# 2. CSS Styling - Original FinTech Dark Mode & Blue/Gold Accent Restoration
+# 2. CSS Styling - Original FinTech Dark Mode & Layout Fixes
 st.markdown("""
     <style>
     .stApp {
@@ -315,7 +315,6 @@ with st.expander("⚙️ Portfolio, Volume & Exchange Settings", expanded=False)
     st.session_state.capital = st.number_input("Capital ($)", min_value=100, value=st.session_state.capital, step=500)
     st.session_state.leverage = st.slider("Leverage", min_value=1, max_value=5, value=st.session_state.leverage)
     
-    # Suwak minimalnego wolumenu (Volume Filter)
     st.session_state.min_vol = st.slider(
         "📊 Min. 24h Volume (USDT)",
         min_value=0,
@@ -396,20 +395,14 @@ if st.button("🔎 SCAN MARKET NOW"):
         results = sorted(results, key=lambda x: x['net_apy'], reverse=True)
         st.session_state.scan_results = results
 
-# Wyświetlanie wyników z pamięci
+# Wyświetlanie wyników z pamięci (uporządkowane)
 if "scan_results" in st.session_state and st.session_state.scan_results:
     results = st.session_state.scan_results
     
     now_str = datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
     st.caption(f"⏱️ Last Update: **{now_str}** | Min. Vol: **${st.session_state.min_vol:,.0f}**")
     
-    m1, m2 = st.columns(2)
-    m1.metric("Pairs Found", f"{len(results)}")
-    if results:
-        m2.metric("Max Net APY", f"+{results[0]['net_apy']}%")
-    st.write("")
-
-    # Filter & Search Controls
+    # Filter & Search Controls - Umieszczone PRZED metrykami i kartami dla zachowania perfekcyjnej czytelności
     col_search, col_apy, col_filter = st.columns([2, 1, 1])
     with col_search:
         search_query = st.text_input("🔍 Search Asset:", "").strip().upper()
@@ -429,7 +422,19 @@ if "scan_results" in st.session_state and st.session_state.scan_results:
         active_set = {ex.upper() for ex in st.session_state.selected_exchanges}
         filtered_results = [item for item in filtered_results if item['long_ex'] in active_set and item['short_ex'] in active_set]
 
-    # Opcja eksportu do CSV
+    st.write("")
+    
+    # Czyste metryki po przefiltrowaniu
+    m1, m2 = st.columns(2)
+    m1.metric("Filtered Pairs", f"{len(filtered_results)}")
+    if filtered_results:
+        m2.metric("Max Net APY", f"+{filtered_results[0]['net_apy']}%")
+    else:
+        m2.metric("Max Net APY", "0.00%")
+        
+    st.write("")
+
+    # Opcja eksportu do CSV umieszczona w czytelnym miejscu
     if filtered_results:
         df_export = pd.DataFrame(filtered_results)
         csv_data = df_export.to_csv(index=False).encode('utf-8')
